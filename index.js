@@ -9,7 +9,7 @@ const userRouter = require("./src/routers/users")
 const productRouter = require ("./src/routers/products")
 const categoriesRouter = require ("./src/routers/categories")
 
-app.use(cors("*"));
+app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
