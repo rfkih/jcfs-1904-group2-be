@@ -4,7 +4,7 @@ const cors = require("cors");
 const app = express();
 const port = 2021;
 
-
+const stocksRouter = require("./src/routers/stocks")
 const userRouter = require("./src/routers/users")
 const productRouter = require ("./src/routers/products")
 const categoriesRouter = require ("./src/routers/categories")
@@ -13,6 +13,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
+app.use("/stocks", stocksRouter)
 app.use("/categories", categoriesRouter)
 app.use("/products", productRouter)
 app.use("/users", userRouter);

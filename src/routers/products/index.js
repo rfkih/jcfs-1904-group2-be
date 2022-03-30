@@ -7,5 +7,4 @@ const postProductRouter = require("./post.products")
 router.use(getProductRouter)
 router.use(postProductRouter)
 
-
 module.exports = router;

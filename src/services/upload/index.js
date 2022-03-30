@@ -1,14 +1,15 @@
 const multer = require("multer");
 const path = require('path')
 
+const photoDirectory = path.join(__dirname, "../../../public/productPicture")
 const storageProductPhoto = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, '../../../public/productPicture')
+        cb(null, photoDirectory)
     },
 
     filename: (req, file, cb) => {
-        console.log(file)
-        cb(null, `${req.products.productName}-photo.png` )
+        cb(null, `${req.body.name}-photo.png` )
+
     }
 })
 
