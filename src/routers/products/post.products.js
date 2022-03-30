@@ -36,21 +36,23 @@ const postProductRouter =  async (req, res, next) => {
 const multerUploadSingle = upload.uploadProductPhoto.single("productPhoto")
 
 const postProductPhotoRouter = async (req, res) => {
-    res.send({data: req.body})
+    let finalImageURL = req.protocol + "://" + req.get("host") + "/uploads/" + req.file.filename;
 
+    res.json({status: "success", image: finalImageURL})
+    // res.send({data: req.body})
     // simpan nama foto
     // req.file.filename --> nama foto yang baru saja di upload (bukan nama original) (public/photos)
-    const sqlPutProductPhoto = `UPDATE users SET ? WHERE id = ?`;
-    const dataPutProductPhoto = [{ photo: req.file.filename }, req.body.id];
+    // const sqlPutProductPhoto = `UPDATE products SET ? WHERE id = ?`;
+    // const dataPutProductPhoto = [{ photo: req.file.filename }, req.body.id];
 
 
-    const connection = await mysql2.promise().getConnection()
+    // const connection = await mysql2.promise().getConnection()
 
-    connection.query(sqlPutProductPhoto, dataPutProductPhoto, (err, result) => {
-      if (err) return res.status(500).send({ err });
+    // connection.query(sqlPutProductPhoto, dataPutProductPhoto, (err, result) => {
+    //   if (err) return res.status(500).send({ err });
 
-      res.status(200).send({ message: "Upload photo success" });
-    });
+    //   res.status(200).send({ message: "Upload photo success" });
+    // });l
   }
 
 

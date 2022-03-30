@@ -1,7 +1,9 @@
 require("dotenv").config();
 const express = require("express");
+const bodyParser = require("body-parser")
 const cors = require("cors");
 const app = express();
+const path = require('path')
 const port = 2021;
 
 const stocksRouter = require("./src/routers/stocks")
@@ -10,6 +12,8 @@ const productRouter = require ("./src/routers/products")
 const categoriesRouter = require ("./src/routers/categories")
 
 app.use(cors());
+app.use(express.static(path.join(__dirname, "./public")));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 
