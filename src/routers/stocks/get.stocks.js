@@ -1,6 +1,9 @@
 const router = require("express").Router();
 const {mysql2} = require("../../config/database");
 
+
+
+
 const getStocksRouter =  async (req, res, next) => {
     try {
         const connection = await mysql2.promise().getConnection()
@@ -10,8 +13,15 @@ const getStocksRouter =  async (req, res, next) => {
      
       const [result] = await connection.query(sqlGetStocks, req.params.productsId);
       connection.release();
-  
-      res.status(200).send(result);
+
+      const {qtyBoxAvailable, qtyBoxTotal, qtyBottleAvailable, qtyBottleTotal, qtyMlAvailable, qtyMlTotal, qtyStripsavailable, qtyStripsTotal, qtyMgAvailable, qtyMgTotal } = result[0]
+
+      const stockLiquid = qtyBottleAvailable + (qtyBoxAvailable * qtyBottleTotal)
+      const stockNonLiquid = qtyStripsavailable + (qtyBoxAvailable * qtyStripsTotal)
+
+      calculatedStock = {stockLiquid, stockNonLiquid}
+
+      res.status(200).send(calculatedStock);
     } catch (error) {
       next(error)
     }
