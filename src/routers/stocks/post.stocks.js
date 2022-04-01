@@ -14,7 +14,7 @@ const postStocksRouter =  async (req, res, next) => {
 
         try {
            const result =  await connection.query(sqlPostStocks, data,) 
-           console.log({result})
+           
             res.status(201).send({
                 message: `Data Stock  berhasil ditambahkan`,
                 
