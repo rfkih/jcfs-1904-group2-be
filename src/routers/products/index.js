@@ -4,7 +4,9 @@ const router = express.Router();
 const getProductRouter = require("./get.products")
 const postProductRouter = require("./post.products")
 const putDeleteRouter = require("./put.products")
+const putUpdateProductRouter = require("./put.products")
 
+router.use(putUpdateProductRouter)
 router.use(putDeleteRouter)
 router.use(getProductRouter)
 router.use(postProductRouter)

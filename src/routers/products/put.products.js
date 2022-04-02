@@ -27,6 +27,35 @@ const putDeleteRouter =  async (req, res, next) => {
 };
 
 
+const putUpdateProductRouter =  async (req, res, next) => {
+
+    try {
+        const connection = await mysql2.promise().getConnection()
+
+        const sqlUpdateProduct = `UPDATE products SET ? WHERE id = ?`;
+
+        
+        console.log(req.body.updatedProduct);
+        const dataUpdateProduct = [req.body.updatedProduct, req.body.params.id]
+        try {
+           const result =  await connection.query(sqlUpdateProduct, dataUpdateProduct) 
+           
+            res.status(201).send({
+                message: `Produk berhasil di update`,
+                
+            });
+
+        } catch (error) {
+            next(error)
+        } 
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+
+router.put("/:productsId", putUpdateProductRouter)
 router.put("/", putDeleteRouter)
 
 

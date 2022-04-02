@@ -64,20 +64,7 @@ const postProductRouter =  async (req, res, next) => {
             next(error);
         }
 
-        
-
-        // try {
-        //    const result =  await connection.query(sqlPostProduct, data,) 
-        //    console.log({result})
-        //     res.status(201).send({
-        //         message: `Data Produk : ${req.body.productName } berhasil ditambahkan`,
-        //         productId : `${result[0].insertId}`
-        //     });
-
-     
-        // } catch (error) {
-        //     next(error)
-        // } 
+       
     } catch (error) {
         next(error);
     }

@@ -21,12 +21,15 @@ const getStocksRouter =  async (req, res, next) => {
 
       calculatedStock = {stockLiquid, stockNonLiquid}
 
-      res.status(200).send(calculatedStock);
+      res.status(200).send({calculatedStock, result});
     } catch (error) {
       next(error)
     }
   };
 
-  router.get("/:productsId", getStocksRouter)
+
+  
+
+  router.get("/:productsId", getStocksRouter, )
 
   module.exports = router;
