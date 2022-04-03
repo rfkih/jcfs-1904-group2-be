@@ -33,7 +33,7 @@ const postProductRouter =  async (req, res, next) => {
 
             const[result] = await connection.query(sqlPostProduct, dataProduct);
             
-            console.log(result.insertId);
+            
 
             const sqlPostStocks = "INSERT INTO stocks SET ?";
 

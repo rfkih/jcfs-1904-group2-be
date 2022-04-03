@@ -26,6 +26,32 @@ const putDeleteRouter =  async (req, res, next) => {
     }
 };
 
+const putUndeleteRouter =  async (req, res, next) => {
+
+    try {
+        const connection = await mysql2.promise().getConnection()
+
+        const sqlUndelete = `UPDATE products SET isDeleted = 0 WHERE id = ?`;
+        
+        const data = req.body.id
+        console.log(req);
+
+        try {
+           const result =  await connection.query(sqlUndelete, data) 
+           
+            res.status(201).send({
+                message: `Produk berhasil di un-delete`,
+                
+            });
+
+        } catch (error) {
+            next(error)
+        } 
+    } catch (error) {
+        next(error);
+    }
+};
+
 
 const putUpdateProductRouter =  async (req, res, next) => {
 
@@ -33,9 +59,7 @@ const putUpdateProductRouter =  async (req, res, next) => {
         const connection = await mysql2.promise().getConnection()
 
         const sqlUpdateProduct = `UPDATE products SET ? WHERE id = ?`;
-
         
-        console.log(req.body.updatedProduct);
         const dataUpdateProduct = [req.body.updatedProduct, req.body.params.id]
         try {
            const result =  await connection.query(sqlUpdateProduct, dataUpdateProduct) 
@@ -54,7 +78,7 @@ const putUpdateProductRouter =  async (req, res, next) => {
 };
 
 
-
+router.put("/undelete", putUndeleteRouter)
 router.put("/:productsId", putUpdateProductRouter)
 router.put("/", putDeleteRouter)
 

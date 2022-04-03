@@ -10,7 +10,7 @@ const putUpdateStocksRouter =  async (req, res, next) => {
         const sqlUpdateProduct = `UPDATE stocks SET ? WHERE product_id = ?`;
 
         
-        console.log(req.body.updatedProduct);
+        
         const dataUpdateProduct = [req.body.updatedStocks, req.body.params.id]
         try {
            const result =  await connection.query(sqlUpdateProduct, dataUpdateProduct) 
