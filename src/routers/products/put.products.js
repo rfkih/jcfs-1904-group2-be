@@ -34,7 +34,7 @@ const putUndeleteRouter =  async (req, res, next) => {
         const sqlUndelete = `UPDATE products SET isDeleted = 0 WHERE id = ?`;
         
         const data = req.body.id
-        console.log(req);
+       
 
         try {
            const result =  await connection.query(sqlUndelete, data) 

@@ -11,6 +11,13 @@ const mysql2 = mysql.createPool({
   database: DB_NAME,
 });
 
+// const mysql2 = mysql.createPool({
+//   host: "172.105.115.129",
+//   user: "user-2",
+//   password: "9a216om5g",
+//   database:"2_pharmacy",
+// });
+
 module.exports = { mysql2 };
 
 
