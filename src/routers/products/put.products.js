@@ -59,6 +59,7 @@ const putUpdateProductRouter =  async (req, res, next) => {
         const connection = await mysql2.promise().getConnection()
 
         const sqlUpdateProduct = `UPDATE products SET ? WHERE id = ?`;
+        console.log(req.body);
         
         const dataUpdateProduct = [req.body.updatedProduct, req.body.params.id]
         try {
