@@ -1,6 +1,10 @@
 const router = require("express").Router();
 const {mysql2} = require("../../config/database");
 
+
+
+//Get Categories
+
 const getCategoriesRouter =  async (req, res, next) => {
     try {
         const connection = await mysql2.promise().getConnection()
@@ -16,6 +20,9 @@ const getCategoriesRouter =  async (req, res, next) => {
       next(error)
     }
   };
+
+
+  
 
   router.get("/", getCategoriesRouter)
 
