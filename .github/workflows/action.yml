@@ -1,5 +1,5 @@
 # Konfigurasi Continuos Deployment
-name: 4_warehouse
+name: 2_pharmacy
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Deploy 4_wareouse API with github action
+      - name: Deploy 2_pharmacy API with github action
         uses: appleboy/ssh-action@master
         with:
           host: ${{secrets.SSH_HOST}}
