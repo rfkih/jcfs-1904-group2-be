@@ -6,7 +6,7 @@ const getTransactionRouter =  async (req, res, next) => {
     try {
         const connection = await mysql2.promise().getConnection()
   
-      const sqlGetTransaction = "select * from transaction";
+      const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction`;
   
       const [result] = await connection.query(sqlGetTransaction);
 
@@ -36,17 +36,33 @@ const getTransactionRouter =  async (req, res, next) => {
 
       const sqlGetDetailTransactionMonth = `select year(created_at) as year, MONTH(created_at) As month , sum(totalPrice) as total_revenue from transaction where transactionStatus = "complete" and created_at >= DATE_SUB(CURDATE(), INTERVAL ? month) group by year, month;`;
 
-      month = req.query.month
+      const sqlGetDetailTransactionYear = `select year(created_at) as year, MONTH(created_at) As month , sum(totalPrice) as total_revenue from transaction where transactionStatus = "complete" and year(created_at) = ? group by year, month;`
      
+      month = req.query.month
+      year = req.query.yeardata
+      
+      
+
       const [sumResultAll] = await connection.query(sqlGetTotalPrice);
       const [sumResultThirty] = await connection.query(sqlGetTotalPriceThirty)
       const [sumResultSeven] = await connection.query(sqlGetTotalPriceSeven)
       const [sumResultToday] = await connection.query(sqlGetTotalPriceToday)
-      const [detailTransactionMonth] = await connection.query(sqlGetDetailTransactionMonth, month)
+
+      if (year) {
+        const [detailTransactionMonth] = await connection.query(sqlGetDetailTransactionYear, year)
+        connection.release();
+        res.status(200).send({sumResultAll, sumResultThirty, sumResultSeven, sumResultToday, detailTransactionMonth});
+
+      } else {
+        const [detailTransactionMonth] = await connection.query(sqlGetDetailTransactionMonth, month)
+        connection.release();
+        res.status(200).send({sumResultAll, sumResultThirty, sumResultSeven, sumResultToday, detailTransactionMonth});
+      }
+
         
-      connection.release();
+     
   
-      res.status(200).send({sumResultAll, sumResultThirty, sumResultSeven, sumResultToday, detailTransactionMonth});
+      
     } catch (error) {
       next(error)
     }
