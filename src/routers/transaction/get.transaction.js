@@ -5,14 +5,26 @@ const {mysql2} = require("../../config/database");
 const getTransactionRouter =  async (req, res, next) => {
     try {
         const connection = await mysql2.promise().getConnection()
-  
-      const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction`;
-  
-      const [result] = await connection.query(sqlGetTransaction);
 
-      connection.release();
-  
-      res.status(200).send(result);
+      
+        const status = (req.query.status)
+      
+        const sqlGetTransactionByStatus = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction where transactionStatus = ?`
+      
+        const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction`;
+
+      if (status) {
+        const [result] = await connection.query(sqlGetTransactionByStatus, status);
+        connection.release();
+        res.status(200).send(result);
+        
+      } else {
+        const [result] = await connection.query(sqlGetTransaction);
+        connection.release();
+        res.status(200).send(result);
+        
+      }
+      
     } catch (error) {
       next(error)
     }
@@ -22,9 +34,6 @@ const getTransactionRouter =  async (req, res, next) => {
   const getSumCompletedTransactionRouter =  async (req, res, next) => {
     try {
         const connection = await mysql2.promise().getConnection()
-
-     
-  
 
       const sqlGetTotalPrice = `select sum(totalPrice) AS total_revenue from transaction where transactionStatus = "complete"`
 
@@ -69,6 +78,33 @@ const getTransactionRouter =  async (req, res, next) => {
   };
 
 
+  const getTransactionByIdRouter =  async (req, res, next) => {
+    try {
+        const connection = await mysql2.promise().getConnection()
+
+      
+       console.log();
+      
+        const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction where id = ?`;
+
+      
+        const [result] = await connection.query(sqlGetTransaction, req.params.transactionId);
+
+        // console.log(result[0].user_id);
+
+        sqlGetUser = `select * from users where id = ?`;
+
+        const [user] = await connection.query(sqlGetUser, result[0].user_id )
+        connection.release();
+        res.status(200).send({result, user});
+        
+      
+      
+    } catch (error) {
+      next(error)
+    }
+  };
+
 
 
 
@@ -76,8 +112,7 @@ const getTransactionRouter =  async (req, res, next) => {
 
 
   router.get("/completed", getSumCompletedTransactionRouter)
-  
-  
+  router.get("/:transactionId", getTransactionByIdRouter)
   router.get("/", getTransactionRouter)
 
   module.exports = router;
