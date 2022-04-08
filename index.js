@@ -32,5 +32,5 @@ app.get("/", (req, res) => {
 app.listen(port, (err) => {
   if (err) return cosole.log({ err });
 
-  console.log(`Api is running at port ${port}`);
+  console.log(`2_pharmacy is running at ${port}`);
 });
