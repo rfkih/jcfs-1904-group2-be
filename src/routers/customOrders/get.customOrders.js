@@ -21,10 +21,30 @@ const getCustomOrderRouter =  async (req, res, next) => {
   };
 
 
+  const getCustomOrderByIdRouter =  async (req, res, next) => {
+    try {
+        const connection = await mysql2.promise().getConnection()
+
+
+  
+      const sqlGetOrder = `select * from custom_order where id = ?;`;
+      
+  
+      const [result] = await connection.query(sqlGetOrder, req.params.orderId );
+     
+      connection.release();
+  
+      res.status(200).send(result);
+    } catch (error) {
+      next(error)
+    }
+  };
 
 
 
 
+
+  router.get("/:orderId", getCustomOrderByIdRouter )
 router.get("/", getCustomOrderRouter )
 
 module.exports = router;
