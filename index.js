@@ -12,6 +12,7 @@ const productRouter = require ("./src/routers/products")
 const categoriesRouter = require ("./src/routers/categories")
 const transactionRouter = require ("./src/routers/transaction")
 const transactiondetailRouter = require("./src/routers/transactionDetails")
+const customOrdersROuter = require("./src/routers/customOrders/")
 
 app.use(cors());
 app.use(express.static(path.join(__dirname, "public")));
@@ -19,7 +20,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 
+
+
 app.use("/transaction", transactionRouter)
+app.use("/customorders", customOrdersROuter)
 app.use("/transactiondetails", transactiondetailRouter)
 app.use("/stocks", stocksRouter)
 app.use("/categories", categoriesRouter)

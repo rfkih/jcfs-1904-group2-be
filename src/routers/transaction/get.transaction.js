@@ -83,7 +83,6 @@ const getTransactionRouter =  async (req, res, next) => {
         const connection = await mysql2.promise().getConnection()
 
       
-       console.log();
       
         const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction where id = ?`;
 

@@ -6,9 +6,7 @@ const {mysql2} = require("../../config/database");
 
 const getProductRouter =  async (req, res, next) => {
 
-  // Get product bisa menerima data dari axios berupa category
-  // Jika category ada isinya, maka search product berdasarkan category, gunakan WHERE
-  // Jika category kosong, maka ambil semua products
+  
     try {
       const connection = await mysql2.promise().getConnection();
       
