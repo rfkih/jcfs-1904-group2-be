@@ -24,8 +24,6 @@ const getCustomOrderRouter =  async (req, res, next) => {
   const getCustomOrderByIdRouter =  async (req, res, next) => {
     try {
         const connection = await mysql2.promise().getConnection()
-
-
   
       const sqlGetOrder = `select * from custom_order where id = ?;`;
       
