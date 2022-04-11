@@ -105,11 +105,37 @@ const getTransactionRouter =  async (req, res, next) => {
   };
 
 
+// get transaction by Date 
+  const getTransactionByDateRouter = async (req, res, next) => {
+
+    try {
+        const connection = await mysql2.promise().getConnection()
+
+      
+  
+      const sqlGetTransactionByDate = `select sum(totalPrice) AS total_revenue from transaction where created_at between ?  and ? `;
+      
+      const [result] = await connection.query(sqlGetTransactionByDate, [req.query.setDateFrom, req.query.setDateTo]);
+      connection.release();
+  
+      res.status(200).send(result);
+    } catch (error) {
+      next(error)
+    }
+  };
+
+
+
+
+
+
+
+
 
 
   
 
-
+  router.get("/date", getTransactionByDateRouter)
   router.get("/completed", getSumCompletedTransactionRouter)
   router.get("/:transactionId", getTransactionByIdRouter)
   router.get("/", getTransactionRouter)
