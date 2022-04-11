@@ -6,7 +6,7 @@ const {mysql2} = require("../../config/database");
     try {
         const connection = await mysql2.promise().getConnection()
 
-        console.log(req.body);
+        
   
       const sqlGetProductsById = "select id, category_id, productName, productDetails, productIMG, isLiquid, price from products";
       

@@ -13,7 +13,6 @@ const storageProductPhoto = multer.diskStorage({
             "-" +
             Date.now() +
             path.extname(file.originalname) )
-
     }
 })
 

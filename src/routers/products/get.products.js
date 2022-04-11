@@ -11,24 +11,30 @@ const getProductRouter =  async (req, res, next) => {
       const connection = await mysql2.promise().getConnection();
       
   
-      const sqlGetProducts = "select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where isDeleted = 0";
-      const sqlGetProductsCategory = "select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where category_id = ? && isDeleted = 0";
-      const category_id = req.query.category_id
+      const sqlGetProducts = "select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where isDeleted = 0 limit  ? offset ?"
+      const sqlCountProducts = `SELECT COUNT(*) AS count FROM products where isDeleted = 0;`
+      const sqlGetProductsCategory = "select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where category_id = ? && isDeleted = 0 limit  ? offset ?"
+      const sqlCountProductsCategory = `SELECT COUNT(*) AS count FROM products where category_id = ? && isDeleted = 0`
+      const category_id = req.query.category
+      const limit = parseInt(req.query.productPerPage)
+      const offset = parseInt(req.query.OFFSET)
      
-
-     if (category_id) {
-      const [result] = await connection.query(sqlGetProductsCategory, category_id);
       
+      
+     if (category_id) {
+      const [result] = await connection.query(sqlGetProductsCategory, [category_id, limit, offset]);
+      const [count] = await connection.query(sqlCountProductsCategory, category_id)
+       
       connection.release();
-      res.status(200).send(result);
-      console.log(result);
+      res.status(200).send({result, count});
+      
 
 
      } else {
-      const [result] = await connection.query(sqlGetProducts);
-
+      const [result] = await connection.query(sqlGetProducts, [limit, offset ]);
+      const [count] = await connection.query(sqlCountProducts)
       connection.release();
-      res.status(200).send(result);
+      res.status(200).send({result, count});
      }
       
       
@@ -61,13 +67,17 @@ const getProductRouter =  async (req, res, next) => {
     try {
         const connection = await mysql2.promise().getConnection()
   
-      const sqlGetDeletedProducts = "select id, category_id, productName, productDetails, productIMG, isLiquid, isDeleted, price from products where isDeleted = 1";
-  
+      const sqlGetDeletedProducts = "select id, category_id, productName, productDetails, productIMG, isLiquid, isDeleted, price from products where isDeleted = 1 limit  ? offset ?";
+      const sqlCountDeletedProducts = `SELECT COUNT(*) AS count FROM products where isDeleted = 1;`
+      const limit = parseInt(req.query.productPerPage)
+      const offset = parseInt(req.query.OFFSET)
+
      
-      const [result] = await connection.query(sqlGetDeletedProducts);
+      const [result] = await connection.query(sqlGetDeletedProducts, [limit, offset]);
+      const [count] = await connection.query(sqlCountDeletedProducts)
       connection.release();
   
-      res.status(200).send(result);
+      res.status(200).send({result, count});
     } catch (error) {
       next(error)
     }
