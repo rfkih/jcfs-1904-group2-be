@@ -12,7 +12,6 @@ const getProductRouter =  async (req, res, next) => {
      
 
      if (req.query.sort || req.query.keyword ) {
-
       const sqlGetProducts = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where isDeleted = 0 ${req.query.keyword} ${req.query.sort} limit ? offset ?`
       const sqlCountProducts = `SELECT COUNT(*) AS count FROM products where isDeleted = 0;`
       const sqlGetProductsCategory = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where category_id = ? && isDeleted = 0 ${req.query.keyword}${req.query.sort} limit  ? offset ?`
