@@ -9,7 +9,7 @@ const getProductRouter =  async (req, res, next) => {
   
     try {
       const connection = await mysql2.promise().getConnection();
-      console.log(req.query.keyword);
+     
 
      if (req.query.sort || req.query.keyword ) {
 
@@ -20,9 +20,7 @@ const getProductRouter =  async (req, res, next) => {
       const category_id = req.query.category
       const limit = parseInt(req.query.productPerPage)
       const offset = parseInt(req.query.OFFSET)
-      
       if (category_id) {
-      
         const [result] = await connection.query(sqlGetProductsCategory, [category_id, limit, offset]);
         const [count] = await connection.query(sqlCountProductsCategory, category_id)  
         connection.release();
@@ -33,9 +31,7 @@ const getProductRouter =  async (req, res, next) => {
         connection.release();
         res.status(200).send({result, count});
      }
-       
      }else{
-
       const sqlGetProducts = "select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where isDeleted = 0 limit  ? offset ?"
       const sqlCountProducts = `SELECT COUNT(*) AS count FROM products where isDeleted = 0;`
       const sqlGetProductsCategory = "select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where category_id = ? && isDeleted = 0 limit  ? offset ?"
@@ -43,9 +39,7 @@ const getProductRouter =  async (req, res, next) => {
       const category_id = req.query.category
       const limit = parseInt(req.query.productPerPage)
       const offset = parseInt(req.query.OFFSET)
-      
       if (category_id) {
-      
         const [result] = await connection.query(sqlGetProductsCategory, [category_id, limit, offset]);
         const [count] = await connection.query(sqlCountProductsCategory, category_id)  
         connection.release();
@@ -56,9 +50,7 @@ const getProductRouter =  async (req, res, next) => {
         connection.release();
         res.status(200).send({result, count});
      }
-
      }
-      
     } catch (error) {
       next(error)
     }
