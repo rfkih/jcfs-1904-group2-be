@@ -9,32 +9,86 @@ const getProductRouter =  async (req, res, next) => {
   
     try {
       const connection = await mysql2.promise().getConnection();
-      
+      const sortType = 'DESC'
+      console.log(req);
   
       const sqlGetProducts = "select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where isDeleted = 0 limit  ? offset ?"
+      
+      const sqlGetProductsSortPriceAsc = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where isDeleted = 0  order by price ASC limit ? offset ? ;`
+      const sqlGetProductsSortPriceDsc = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where isDeleted = 0  order by price DESC limit ? offset ? ;`
+      const sqlGetProductsSortNameAsc = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where isDeleted = 0  order by productName ASC limit ? offset ? ;`
+      const sqlGetProductsSortNameDsc = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where isDeleted = 0  order by productName DESC limit ? offset ? ;`
+      
       const sqlCountProducts = `SELECT COUNT(*) AS count FROM products where isDeleted = 0;`
       const sqlGetProductsCategory = "select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where category_id = ? && isDeleted = 0 limit  ? offset ?"
+      const sqlGetProsuctsCategoryPriceAsc = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where category_id= ? && isDeleted = 0  order by price ASC limit ? offset ? ;`
+      const sqlGetProsuctsCategoryPriceDsc = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where category_id= ? && isDeleted = 0  order by price DESC limit ? offset ? ;`
+      const sqlGetProsuctsCategoryNameAsc = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where category_id= ? && isDeleted = 0  order by productName ASC limit ? offset ? ;`
+      const sqlGetProsuctsCategoryNameDsc = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where category_id= ? && isDeleted = 0  order by productName DESC limit ? offset ? ;`
       const sqlCountProductsCategory = `SELECT COUNT(*) AS count FROM products where category_id = ? && isDeleted = 0`
       const category_id = req.query.category
       const limit = parseInt(req.query.productPerPage)
       const offset = parseInt(req.query.OFFSET)
-     
+      console.log(req.query.sort);
       
       
      if (category_id) {
-      const [result] = await connection.query(sqlGetProductsCategory, [category_id, limit, offset]);
-      const [count] = await connection.query(sqlCountProductsCategory, category_id)
-       
-      connection.release();
-      res.status(200).send({result, count});
-      
 
+      if (req.query.sort == 'lowPrice') {
+        const [result] = await connection.query(sqlGetProsuctsCategoryPriceAsc, [category_id, limit, offset]);
+        const [count] = await connection.query(sqlCountProductsCategory, category_id)  
+        connection.release();
+        res.status(200).send({result, count});
+      } else if (req.query.sort == 'highPrice') {
+        const [result] = await connection.query(sqlGetProsuctsCategoryPriceDsc, [category_id, limit, offset]);
+        const [count] = await connection.query(sqlCountProductsCategory, category_id)  
+        connection.release();
+        res.status(200).send({result, count}); 
+      } else if (req.query.sort == 'az') {
+        const [result] = await connection.query(sqlGetProsuctsCategoryNameAsc, [category_id, limit, offset]);
+        const [count] = await connection.query(sqlCountProductsCategory, category_id)  
+        connection.release();
+        res.status(200).send({result, count});
+      } else if (req.query.sort == 'za') {
+        const [result] = await connection.query(sqlGetProsuctsCategoryNameDsc, [category_id, limit, offset]);
+        const [count] = await connection.query(sqlCountProductsCategory, category_id)  
+        connection.release();
+        res.status(200).send({result, count}); 
+      } else {
+        const [result] = await connection.query(sqlGetProductsCategory, [category_id, limit, offset]);
+        const [count] = await connection.query(sqlCountProductsCategory, category_id)  
+        connection.release();
+        res.status(200).send({result, count});
+      }
 
      } else {
-      const [result] = await connection.query(sqlGetProducts, [limit, offset ]);
-      const [count] = await connection.query(sqlCountProducts)
-      connection.release();
-      res.status(200).send({result, count});
+
+      if (req.query.sort == 'lowPrice') {
+        const [result] = await connection.query(sqlGetProductsSortPriceAsc, [limit, offset ]);
+        const [count] = await connection.query(sqlCountProducts)
+        connection.release();
+        res.status(200).send({result, count});
+      }  else if (req.query.sort == 'highPrice') {
+        const [result] = await connection.query(sqlGetProductsSortPriceDsc, [limit, offset ]);
+        const [count] = await connection.query(sqlCountProducts)
+        connection.release();
+        res.status(200).send({result, count}); 
+      } else if (req.query.sort == 'az') {
+        const [result] = await connection.query(sqlGetProductsSortNameAsc, [limit, offset ]);
+        const [count] = await connection.query(sqlCountProducts)
+        connection.release();
+        res.status(200).send({result, count});
+      } else if (req.query.sort == 'za') {
+        const [result] = await connection.query(sqlGetProductsSortNameDsc, [limit, offset ]);
+        const [count] = await connection.query(sqlCountProducts)
+        connection.release();
+        res.status(200).send({result, count});  
+      } else {
+        const [result] = await connection.query(sqlGetProducts, [limit, offset ]);
+        const [count] = await connection.query(sqlCountProducts)
+        connection.release();
+        res.status(200).send({result, count});
+      }
      }
       
       
