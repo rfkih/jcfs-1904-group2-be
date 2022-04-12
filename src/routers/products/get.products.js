@@ -9,13 +9,13 @@ const getProductRouter =  async (req, res, next) => {
   
     try {
       const connection = await mysql2.promise().getConnection();
-      console.log(req.query.sort);
+      console.log(req.query.keyword);
 
-     if (req.query.sort) {
+     if (req.query.sort || req.query.keyword ) {
 
-      const sqlGetProducts = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where isDeleted = 0 ${req.query.sort} limit  ? offset ?`
+      const sqlGetProducts = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where isDeleted = 0 ${req.query.keyword} ${req.query.sort} limit ? offset ?`
       const sqlCountProducts = `SELECT COUNT(*) AS count FROM products where isDeleted = 0;`
-      const sqlGetProductsCategory = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where category_id = ? && isDeleted = 0 ${req.query.sort} limit  ? offset ?`
+      const sqlGetProductsCategory = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where category_id = ? && isDeleted = 0 ${req.query.keyword}${req.query.sort} limit  ? offset ?`
       const sqlCountProductsCategory = `SELECT COUNT(*) AS count FROM products where category_id = ? && isDeleted = 0`
       const category_id = req.query.category
       const limit = parseInt(req.query.productPerPage)
