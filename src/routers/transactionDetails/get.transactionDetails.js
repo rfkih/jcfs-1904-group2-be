@@ -4,7 +4,8 @@ const {mysql2} = require("../../config/database")
 
 const getTransactionDetailRouter =  async (req, res, next) => {
     try {
-        const connection = await mysql2.promise().getConnection()
+      
+      const connection = await mysql2.promise().getConnection()
   
       const sqlGetTransactionDetail = "select * from transactiondetail";
 
@@ -28,9 +29,7 @@ const getTransactionDetailRouter =  async (req, res, next) => {
     try {
         const connection = await mysql2.promise().getConnection()
   
-      const sqlCategoryDetail = `select productCategory, sum(quantity) as total_bought from transactiondetail where statusTransactionDetail ="complete" group by productCategory;`
-  
-      
+      const sqlCategoryDetail = `select productCategory, sum(quantity) as total_bought from transactiondetail where statusTransactionDetail ="complete" group by productCategory ${req.query.sortedCategory};`
 
       const [categoryDetail] = await connection.query(sqlCategoryDetail)
 
