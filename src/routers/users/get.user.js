@@ -6,8 +6,10 @@ const {mysql2} = require("../../config/database");
 const getUserRouter =  async (req, res, next) => {
     try {
         const connection = await mysql2.promise().getConnection()
+
+        console.log();
   
-      const sqlGetAllUser = `select id, username, name, gender, email, password, role from users where role = "user";`;
+      const sqlGetAllUser = `select id, username, name, gender, email, password, role from users where role = "user" ${req.query.sortUser};`;
       const sqlCountUser = `SELECT COUNT(*) AS user_count FROM users where role = "user";`;
   
       const [result] = await connection.query(sqlGetAllUser);
