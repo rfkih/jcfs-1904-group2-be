@@ -68,8 +68,9 @@ const getTransactionDetailRouter =  async (req, res, next) => {
   const getTransactionDetailByIdProduct =  async (req, res, next) => {
     try {
       const connection = await mysql2.promise().getConnection()
+      console.log(req.query.sort);
   
-      const sqlGetTransactionDetail = `select * from transactiondetail where product_id = ${req.params.productId}`
+      const sqlGetTransactionDetail = `select * from transactiondetail where product_id = ${req.params.productId} ${req.query.sort}`
       const [result] = await connection.query(sqlGetTransactionDetail);
       const sqlgetQuantity = `select sum(quantity) as total_bought, sum(totalPrice) as total_amount from transactiondetail where product_id = ${req.params.productId}`
       const sqlGetCategoryName = `select categoryName from category where id = ${result[0].productCategory}`
