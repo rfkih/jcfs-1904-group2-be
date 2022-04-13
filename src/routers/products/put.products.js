@@ -6,12 +6,12 @@ const putDeleteRouter =  async (req, res, next) => {
     try {
         const connection = await mysql2.promise().getConnection()
 
-        const sqlDelete = `UPDATE products SET isDeleted = 1 WHERE id = ?`;
+        const sqlDelete = `UPDATE products SET isDeleted = 1 WHERE id = ${req.body.id}`;
 
-        const data = req.body.id
+       
 
         try {
-           const result =  await connection.query(sqlDelete, data) 
+           const result =  await connection.query(sqlDelete) 
            
             res.status(201).send({
                 message: `Produk berhasil di soft delete`,
@@ -31,13 +31,11 @@ const putUndeleteRouter =  async (req, res, next) => {
     try {
         const connection = await mysql2.promise().getConnection()
 
-        const sqlUndelete = `UPDATE products SET isDeleted = 0 WHERE id = ?`;
+        const sqlUndelete = `UPDATE products SET isDeleted = 0 WHERE id = ${req.body.id}`;
         
-        const data = req.body.id
        
-
         try {
-           const result =  await connection.query(sqlUndelete, data) 
+           const result =  await connection.query(sqlUndelete) 
            
             res.status(201).send({
                 message: `Produk berhasil di un-delete`,
@@ -59,7 +57,7 @@ const putUpdateProductRouter =  async (req, res, next) => {
         const connection = await mysql2.promise().getConnection()
 
         const sqlUpdateProduct = `UPDATE products SET ? WHERE id = ?`;
-        console.log(req.body);
+        
         
         const dataUpdateProduct = [req.body.updatedProduct, req.body.params.id]
         try {
