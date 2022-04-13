@@ -42,7 +42,30 @@ const getTransactionDetailRouter =  async (req, res, next) => {
     }
   };
 
+  /// transaction detail by id
+
   const getTransactionDetailByIdRouter =  async (req, res, next) => {
+    try {
+      const connection = await mysql2.promise().getConnection()
+  
+      const sqlGetTransactionDetail = `select * from transactiondetail where transaction_id = ${req.params.transactionId} group by id;`
+
+      const [result] = await connection.query(sqlGetTransactionDetail);
+
+     
+
+     
+      connection.release();
+  
+      res.status(200).send(result);
+    } catch (error) {
+      next(error)
+    }
+  };
+
+  // transaction detail by product 
+
+  const getTransactionDetailByIdProduct =  async (req, res, next) => {
     try {
       const connection = await mysql2.promise().getConnection()
   

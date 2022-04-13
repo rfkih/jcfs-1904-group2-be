@@ -40,9 +40,9 @@ const getProductRouter =  async (req, res, next) => {
     try {
         const connection = await mysql2.promise().getConnection()
   
-      const sqlGetProductsById = "select id, category_id, productName, productDetails, productIMG, isLiquid, price from products WHERE id = ?";
+      const sqlGetProductsById = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products WHERE id = ${req.params.productsId}`;
       
-      const [result] = await connection.query(sqlGetProductsById, req.params.productsId);
+      const [result] = await connection.query(sqlGetProductsById);
       connection.release();
   
       res.status(200).send(result);
