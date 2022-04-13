@@ -11,16 +11,16 @@ const putCustomOrderRouter =  async (req, res, next) => {
 
         
         
-        const sqlRejected = `UPDATE custom_order SET status = 'rejected' WHERE id = ?`;
-        const sqlApproved = `UPDATE custom_order SET status = 'approved' WHERE id = ?`;
+        const sqlRejected = `UPDATE custom_order SET status = 'rejected' WHERE id = ${req.body.params.id}`;
+        const sqlApproved = `UPDATE custom_order SET status = 'approved' WHERE id = ${req.body.params.id}`;
 
         if (!req.body.params.isApproved) {
-            const [result] = await connection.query(sqlRejected, req.body.params.id );
+            const [result] = await connection.query(sqlRejected,  );
             connection.release();
             res.status(200).send(result);
             
         } else {
-            const [result] = await connection.query(sqlApproved, req.params.id );
+            const [result] = await connection.query(sqlApproved );
             connection.release();
             res.status(200).send(result);
             

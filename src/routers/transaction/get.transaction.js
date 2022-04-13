@@ -84,10 +84,10 @@ const getTransactionRouter =  async (req, res, next) => {
 
       
       
-        const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction where id = ?`;
+        const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction where id = ${req.params.transactionId}`;
 
       
-        const [result] = await connection.query(sqlGetTransaction, req.params.transactionId);
+        const [result] = await connection.query(sqlGetTransaction);
 
         // console.log(result[0].user_id);
 
@@ -110,8 +110,6 @@ const getTransactionRouter =  async (req, res, next) => {
 
     try {
         const connection = await mysql2.promise().getConnection()
-
-      
   
       const sqlGetTransactionByDate = `select sum(totalPrice) AS total_revenue from transaction where created_at between ?  and ? `;
       
