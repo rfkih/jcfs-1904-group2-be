@@ -7,7 +7,10 @@ const {mysql2} = require("../../config/database");
 
 const getCategoriesRouter =  async (req, res, next) => {
     try {
-        const connection = await mysql2.promise().getConnection()
+
+      console.log(req.query);
+       
+      const connection = await mysql2.promise().getConnection()
   
       const sqlGetCategories = "select id, categoryName from category";
   

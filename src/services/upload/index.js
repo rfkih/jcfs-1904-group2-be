@@ -13,7 +13,6 @@ const storageProductPhoto = multer.diskStorage({
             "-" +
             Date.now() +
             path.extname(file.originalname) )
-
     }
 })
 
@@ -34,6 +33,5 @@ const uploadProductPhoto = multer({
         cb(null, true);
       },
 })
-
 
 module.exports = { uploadProductPhoto };

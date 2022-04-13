@@ -12,6 +12,7 @@ const productRouter = require("./src/routers/products");
 const categoriesRouter = require("./src/routers/categories");
 const transactionRouter = require("./src/routers/transaction");
 const transactiondetailRouter = require("./src/routers/transactionDetails");
+const customordersRouter = require("./src/routers/customOrders/");
 
 app.use(cors());
 app.use(express.static(path.join(__dirname, "public")));
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use(express.static("public"));
 
 app.use("/transaction", transactionRouter);
+app.use("/customorders", customordersRouter);
 app.use("/transactiondetails", transactiondetailRouter);
 app.use("/stocks", stocksRouter);
 app.use("/categories", categoriesRouter);
