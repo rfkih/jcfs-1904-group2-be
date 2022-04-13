@@ -87,7 +87,7 @@ const getTransactionRouter =  async (req, res, next) => {
       
         const [result] = await connection.query(sqlGetTransaction);
 
-        // console.log(result[0].user_id);
+        
 
         sqlGetUser = `select * from users where id = ?`;
 
