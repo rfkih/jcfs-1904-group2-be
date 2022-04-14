@@ -14,27 +14,6 @@ const getTransactionRouter =  async (req, res, next) => {
         connection.release();
         res.status(200).send(result);
        
-        // if (req.query.keywordTransaction) {
-        //   if (req.query.status) {
-        //     const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction ${req.query.status} and invoice like '%${req.query.keywordTransaction}%' ${req.query.sortTransactions}`;
-        //     const [result] = await connection.query(sqlGetTransaction);
-        //     connection.release();
-        //     res.status(200).send(result); 
-            
-        //   } else {
-        //     const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction where invoice like '%${req.query.keywordTransaction}%' ${req.query.sortTransactions}`;
-        //     const [result] = await connection.query(sqlGetTransaction);
-        //     connection.release();
-        //     res.status(200).send(result); 
-        //   } 
-          
-        // } else {
-        //   const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction ${req.query.status} ${req.query.sortTransactions}`;
-        //   const [result] = await connection.query(sqlGetTransaction);
-        //   connection.release();
-        //   res.status(200).send(result);
-          
-        // } 
       
     } catch (error) {
       next(error)
