@@ -79,6 +79,7 @@ const getProductRouter =  async (req, res, next) => {
         const connection = await mysql2.promise().getConnection()
       console.log();
   
+  
       const sqlGetSoldProducts = `select product_id, productCategory, productName, sum(quantity) as total_bought from transactiondetail where statusTransactionDetail = "complete" ${req.query.keyword} group by product_id, productCategory, productName ${req.query.sortedItem}`
       
      
