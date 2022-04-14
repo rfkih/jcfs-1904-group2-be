@@ -28,7 +28,7 @@ app.use("/categories", categoriesRouter);
 app.use("/products", productRouter);
 app.use("/users", userRouter);
 app.get("/", (req, res) => {
-  res.status(200).send("API IS RUNNING");
+  res.status(200).send("API 2-pharmacy 😎");
 });
 
 app.listen(port, (err) => {
