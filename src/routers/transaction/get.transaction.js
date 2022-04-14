@@ -106,6 +106,8 @@ const getTransactionRouter =  async (req, res, next) => {
 // get transaction by Date 
   const getTransactionByDateRouter = async (req, res, next) => {
 
+      
+        const [result] = await connection.query(sqlGetTransaction);
 
     console.log(req.query.date);
     try {
