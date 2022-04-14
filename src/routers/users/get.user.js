@@ -3,7 +3,7 @@ const {mysql2} = require("../../config/database");
 
 
 // Get All User
-const getUserRouter =  async (req, res, next) => {
+const getUserRouterAdmin =  async (req, res, next) => {
     try {
       const connection = await mysql2.promise().getConnection()
   
@@ -21,7 +21,7 @@ const getUserRouter =  async (req, res, next) => {
   };
 
 
-  const getUserbyIdRouter =  async (req, res, next) => {
+  const getUserbyIdRouterAdmin =  async (req, res, next) => {
     try {
       const connection = await mysql2.promise().getConnection()
   
@@ -42,7 +42,7 @@ const getUserRouter =  async (req, res, next) => {
     }
   };
 
-  router.get("/:UserId", getUserbyIdRouter)
-  router.get("/", getUserRouter)
+  router.get("/admin/:UserId", getUserbyIdRouterAdmin)
+  router.get("/admin", getUserRouterAdmin)
 
   module.exports = router;

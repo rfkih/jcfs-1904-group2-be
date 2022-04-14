@@ -13,7 +13,6 @@ const postProductRouter =  async (req, res, next) => {
 
         await connection.beginTransaction();
         
-
         try {
 
             const sqlPostProduct = "INSERT INTO products SET ?";
