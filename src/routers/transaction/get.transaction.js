@@ -106,20 +106,46 @@ const getTransactionRouter =  async (req, res, next) => {
 // get transaction by Date 
   const getTransactionByDateRouter = async (req, res, next) => {
 
+
+    console.log(req.query.date);
     try {
         const connection = await mysql2.promise().getConnection()
-  
-      const sqlGetTransactionByDate = `select sum(totalPrice) AS total_revenue from transaction where created_at between ?  and ? `;
       
-      const [result] = await connection.query(sqlGetTransactionByDate, [req.query.setDateFrom, req.query.setDateTo]);
+        
+      const sqlGetTransactionByDate = `select sum(totalPrice) AS total_revenue from transaction ${req.query.date} and transactionStatus = 'complete' `;
+      const sqlGetTransactionByMonth = `select sum(totalPrice) AS total_revenue, MONTH(created_at) As month, YEAR(created_at) As year from transaction ${req.query.date} and transactionStatus = 'complete' group by month order by created_at desc;`
+      
+      const [result] = await connection.query(sqlGetTransactionByDate);
+      const [month] = await connection.query(sqlGetTransactionByMonth)
       connection.release();
-  
-      res.status(200).send(result);
+      
+      res.status(200).send({result, month});
     } catch (error) {
       next(error)
     }
   };
+  
 
+  // Get transaction by year
+
+  const getTransactionByYearRouter = async (req, res, next) => {
+
+    try {
+        const connection = await mysql2.promise().getConnection()
+     
+      const sqlGetTransactionTotal = `select sum(totalPrice) AS total_revenue from transaction ${req.query.year} and transactionStatus = 'complete' `;
+      const sqlGetTransactionByYear = `select sum(totalPrice) AS total_revenue, YEAR(created_at) As year from transaction ${req.query.year} and transactionStatus = 'complete' group by year; `;
+      
+      const [result] = await connection.query(sqlGetTransactionByYear);
+      const [total] = await connection.query(sqlGetTransactionTotal)
+      connection.release();
+   
+      res.status(200).send({result, total});
+    } catch (error) {
+      next(error)
+    }
+  };
+  
 
 
 
@@ -130,7 +156,7 @@ const getTransactionRouter =  async (req, res, next) => {
 
 
   
-
+  router.get("/year", getTransactionByYearRouter)
   router.get("/date", getTransactionByDateRouter)
   router.get("/completed", getSumCompletedTransactionRouter)
   router.get("/:transactionId", getTransactionByIdRouter)
