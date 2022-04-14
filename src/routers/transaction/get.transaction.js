@@ -5,23 +5,36 @@ const {mysql2} = require("../../config/database");
 const getTransactionRouter =  async (req, res, next) => {
     try {
         const connection = await mysql2.promise().getConnection()
-        let query = `and`
+        
 
         console.log(req.query.keywordTransaction);
 
-        if (req.query.keywordTransaction) {
-          const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction where invoice like '%${req.query.keywordTransaction}%' ${req.query.sortTransactions}`;
-          const [result] = await connection.query(sqlGetTransaction);
-          connection.release();
-          res.status(200).send(result);
+        const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction ${req.query.date} ${req.query.status} ${req.query.keywordTransaction} ${req.query.sortTransactions}`;
+        const [result] = await connection.query(sqlGetTransaction);
+        connection.release();
+        res.status(200).send(result);
+       
+        // if (req.query.keywordTransaction) {
+        //   if (req.query.status) {
+        //     const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction ${req.query.status} and invoice like '%${req.query.keywordTransaction}%' ${req.query.sortTransactions}`;
+        //     const [result] = await connection.query(sqlGetTransaction);
+        //     connection.release();
+        //     res.status(200).send(result); 
+            
+        //   } else {
+        //     const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction where invoice like '%${req.query.keywordTransaction}%' ${req.query.sortTransactions}`;
+        //     const [result] = await connection.query(sqlGetTransaction);
+        //     connection.release();
+        //     res.status(200).send(result); 
+        //   } 
           
-        } else {
-          const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction ${req.query.status} ${req.query.sortTransactions}`;
-          const [result] = await connection.query(sqlGetTransaction);
-          connection.release();
-          res.status(200).send(result);
+        // } else {
+        //   const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction ${req.query.status} ${req.query.sortTransactions}`;
+        //   const [result] = await connection.query(sqlGetTransaction);
+        //   connection.release();
+        //   res.status(200).send(result);
           
-        } 
+        // } 
       
     } catch (error) {
       next(error)
