@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
-const getCustomOrderRouter = require("./get.customorders")
-const putCustomOrderRouter = require("./put.customorders")
+const getCustomOrderRouter = require("./get.customOrders")
+const putCustomOrderRouter = require("./put.customOrders")
 
 
 

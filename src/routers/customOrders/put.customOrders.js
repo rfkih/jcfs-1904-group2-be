@@ -8,8 +8,6 @@ const putCustomOrderRouter =  async (req, res, next) => {
 
     try {
         const connection = await mysql2.promise().getConnection();
-
-        
         
         const sqlRejected = `UPDATE custom_order SET status = 'rejected' WHERE id = ${req.body.params.id}`;
         const sqlApproved = `UPDATE custom_order SET status = 'approved' WHERE id = ${req.body.params.id}`;
