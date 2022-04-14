@@ -25,10 +25,10 @@ const getCustomOrderRouter =  async (req, res, next) => {
     try {
         const connection = await mysql2.promise().getConnection()
   
-      const sqlGetOrder = `select * from custom_order where id = ?;`;
+      const sqlGetOrder = `select * from custom_order where id = ${req.params.orderId};`;
       
   
-      const [result] = await connection.query(sqlGetOrder, req.params.orderId );
+      const [result] = await connection.query(sqlGetOrder );
      
       connection.release();
   
