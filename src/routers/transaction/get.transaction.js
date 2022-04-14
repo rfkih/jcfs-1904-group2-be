@@ -99,9 +99,7 @@ const getTransactionRouter =  async (req, res, next) => {
   const getTransactionByDateRouter = async (req, res, next) => {
 
       
-        const [result] = await connection.query(sqlGetTransaction);
-
-    console.log(req.query.date);
+    
     try {
         const connection = await mysql2.promise().getConnection()
       
