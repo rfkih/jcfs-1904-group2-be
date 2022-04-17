@@ -68,21 +68,24 @@ const getTransactionDetailRouter =  async (req, res, next) => {
     try {
       const connection = await mysql2.promise().getConnection()
        
-      const sqlGetTransactionDetail = `select * from transactiondetail where product_id = ${req.params.productId} ${req.query.date} ${req.query.sort} `
+      const sqlGetTransactionDetail = `select * from transactiondetail where product_id = ${req.params.productId} ${req.query.date} ${req.query.sort} ${req.query.pages} `
     
       const sqlgetQuantity = `select sum(quantity) as total_bought, sum(totalPrice) as total_amount from transactiondetail where product_id = ${req.params.productId} ${req.query.date}`
+      
+      const sqlTransactionCount = `SELECT COUNT(*) AS count FROM transactiondetail where product_id = ${req.params.productId} ${req.query.date};`
      
-     
+      const [count] = await connection.query(sqlTransactionCount)
       const [result] = await connection.query(sqlGetTransactionDetail);
       const [total] = await connection.query(sqlgetQuantity)
 
       const sqlGetCategoryName = `select categoryName from category where id = ${result[0].productCategory}`
       const sqlGetProductDetail = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where id = ${result[0].product_id}`
+      
 
       const [category] = await connection.query(sqlGetCategoryName)
       const [product] = await connection.query(sqlGetProductDetail)
       connection.release();
-      res.status(200).send({result, category, total, product});
+      res.status(200).send({result, category, total, product, count});
     } catch (error) {
       next(error)
     }

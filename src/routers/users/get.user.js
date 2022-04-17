@@ -6,8 +6,9 @@ const {mysql2} = require("../../config/database");
 const getUserRouterAdmin =  async (req, res, next) => {
     try {
       const connection = await mysql2.promise().getConnection()
+      console.log(req.query.pages);
   
-      const sqlGetAllUser = `select id, username, name, gender, email, password, role from users where role = "user" ${req.query.keywordUser} ${req.query.sortUser};`;
+      const sqlGetAllUser = `select id, username, name, gender, email, password, role from users where role = "user" ${req.query.keywordUser} ${req.query.sortUser} ${req.query.pages};`;
       const sqlCountUser = `SELECT COUNT(*) AS user_count FROM users where role = "user";`;
   
       const [result] = await connection.query(sqlGetAllUser);
@@ -24,19 +25,21 @@ const getUserRouterAdmin =  async (req, res, next) => {
   const getUserbyIdRouterAdmin =  async (req, res, next) => {
     try {
       const connection = await mysql2.promise().getConnection()
-  
-      const sqlGetUserById = `select id, username, name, gender, photo, email, password, role from users where id = ?;`;
 
-      const sqlGetTransactionByUserId = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction where user_id = ?`;
+      console.log();
   
-      const [result] = await connection.query(sqlGetUserById, req.params.UserId);
+      const sqlGetUserById = `select id, username, name, gender, photo, email, password, role from users where id = ${req.params.UserId};`;
 
-      
+      const sqlGetTransactionByUserId = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction where user_id = ? ${req.query.pages}`;
+      const sqlCountTransaction = `SELECT COUNT(*) AS count FROM transaction where user_id = ?;`
+      const [result] = await connection.query(sqlGetUserById);
+      const [count] = await connection.query(sqlCountTransaction, result[0].id)
       const [transaction] = await connection.query(sqlGetTransactionByUserId, result[0].id)
+      
       
       connection.release();
   
-      res.status(200).send({result, transaction});
+      res.status(200).send({result, transaction, count});
     } catch (error) {
       next(error)
     }
