@@ -7,7 +7,7 @@ const getTransactionRouter =  async (req, res, next) => {
         const connection = await mysql2.promise().getConnection()
         
 
-        console.log(req.query.keywordTransaction);
+     
 
         const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction ${req.query.date} ${req.query.status} ${req.query.keywordTransaction} ${req.query.sortTransactions}`;
         const [result] = await connection.query(sqlGetTransaction);
