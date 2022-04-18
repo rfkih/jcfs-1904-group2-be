@@ -43,9 +43,12 @@ const getProductRouter =  async (req, res, next) => {
       const sqlGetProductsById = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products WHERE id = ${req.params.productsId}`;
       
       const [result] = await connection.query(sqlGetProductsById);
+      
+      const  sqlGetCategoryById = `select categoryName from category where id = ${result[0].category_id}`
+      const [category] = await connection.query(sqlGetCategoryById)
       connection.release();
   
-      res.status(200).send(result);
+      res.status(200).send({result, category});
     } catch (error) {
       next(error)
     }
