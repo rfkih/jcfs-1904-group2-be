@@ -9,7 +9,6 @@ const getStocksRouter =  async (req, res, next) => {
         const connection = await mysql2.promise().getConnection()
   
       const sqlGetStocks = "select * from stocks WHERE product_id = ?";
-  
      
       const [result] = await connection.query(sqlGetStocks, req.params.productsId);
       connection.release();
