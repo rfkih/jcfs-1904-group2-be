@@ -52,11 +52,35 @@ const postProductRouter =  async (req, res, next) => {
                 },
             ];
 
+            const stockLiquid = req.body.newStock.qtyBottleAvailable + (req.body.newStock.qtyBoxAvailable * 10)
+            const stockNonLiquid = req.body.newStock.qtyStripsavailable + (req.body.newStock.qtyBoxAvailable * 10)
+            
+           const sqlPostLog = "INSERT INTO data_logging SET ?"
+
+           const dataLogLiquid = [{
+            user_id: 1,
+            product_id: result.insertId,
+            stock_in: stockLiquid,
+            status: 'add',
+            }]
+
+            const dataLoqNonLiquid = [{
+                user_id: 1,
+                product_id: result.insertId,
+                stock_in: stockNonLiquid,
+                status: 'add',
+            }]
+
+           if (req.body.newProduct.isLiquid) {
+               await connection.query(sqlPostLog, dataLogLiquid)
+           }else{
+                await connection.query(sqlPostLog, dataLoqNonLiquid)
+           }
 
             await connection.query(sqlPostStocks, dataStock)
 
             connection.commit();
-        res.send("Input Product success");
+            res.send("Input Product success");
             
         } catch (error) {
             connection.rollback();
