@@ -8,7 +8,7 @@ const {mysql2} = require("../../config/database");
 const getCategoriesRouter =  async (req, res, next) => {
     try {
 
-      console.log(req.query);
+     
        
       const connection = await mysql2.promise().getConnection()
   

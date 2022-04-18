@@ -5,23 +5,16 @@ const {mysql2} = require("../../config/database");
 const getTransactionRouter =  async (req, res, next) => {
     try {
         const connection = await mysql2.promise().getConnection()
-        let query = `and`
+     
 
-        console.log(req.query.keywordTransaction);
+        const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction ${req.query.date} ${req.query.status} ${req.query.keywordTransaction} ${req.query.sortTransactions} ${req.query.pages}`;
+        const sqlCountTransaction =`SELECT COUNT(*) AS count FROM transaction`
 
-        if (req.query.keywordTransaction) {
-          const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction where invoice like '%${req.query.keywordTransaction}%' ${req.query.sortTransactions}`;
-          const [result] = await connection.query(sqlGetTransaction);
-          connection.release();
-          res.status(200).send(result);
-          
-        } else {
-          const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction ${req.query.status} ${req.query.sortTransactions}`;
-          const [result] = await connection.query(sqlGetTransaction);
-          connection.release();
-          res.status(200).send(result);
-          
-        } 
+        const [result] = await connection.query(sqlGetTransaction);
+        const [count] = await connection.query(sqlCountTransaction)
+        connection.release();
+        res.status(200).send({result, count});
+       
       
     } catch (error) {
       next(error)
@@ -107,9 +100,7 @@ const getTransactionRouter =  async (req, res, next) => {
   const getTransactionByDateRouter = async (req, res, next) => {
 
       
-        const [result] = await connection.query(sqlGetTransaction);
-
-    console.log(req.query.date);
+    
     try {
         const connection = await mysql2.promise().getConnection()
       

@@ -6,13 +6,14 @@ const putUpdateStocksRouter =  async (req, res, next) => {
 
     try {
         const connection = await mysql2.promise().getConnection()
-
-        const sqlUpdateProduct = `UPDATE stocks SET ? WHERE product_id = ?`;
+        await connection.beginTransaction();
 
         
-        
-        const dataUpdateProduct = [req.body.updatedStocks, req.body.params.id]
         try {
+
+            const sqlUpdateProduct = `UPDATE stocks SET ? WHERE product_id = ?`;
+
+            const dataUpdateProduct = [req.body.updatedStocks, req.body.params.id]
            const result =  await connection.query(sqlUpdateProduct, dataUpdateProduct) 
            
             res.status(201).send({
@@ -24,6 +25,7 @@ const putUpdateStocksRouter =  async (req, res, next) => {
             next(error)
         } 
     } catch (error) {
+        connection.rollback();
         next(error);
     }
 };

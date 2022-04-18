@@ -27,15 +27,16 @@ const getTransactionDetailRouter =  async (req, res, next) => {
 
   const getTransactionDetailCategoryRouter =  async (req, res, next) => {
     try {
-        const connection = await mysql2.promise().getConnection()
+      
+      const connection = await mysql2.promise().getConnection()
   
-      const sqlCategoryDetail = `select productCategory, sum(quantity) as total_bought from transactiondetail where statusTransactionDetail ="complete" group by productCategory ${req.query.sortedCategory};`
-
+      const sqlCategoryDetail = `select productCategory, sum(quantity) as total_bought from transactiondetail where statusTransactionDetail ="complete" group by productCategory ${req.query.sortedCategory} ${req.query.pages};`
+      const sqlCategoryCount = `SELECT COUNT(*) AS count FROM transactiondetail where statusTransactionDetail = 'complete' group by productCategory;`
       const [categoryDetail] = await connection.query(sqlCategoryDetail)
-
+      const [count] = await connection.query(sqlCategoryCount)
       connection.release();
   
-      res.status(200).send(categoryDetail);
+      res.status(200).send({categoryDetail, count});
     } catch (error) {
       next(error)
     }
@@ -67,18 +68,25 @@ const getTransactionDetailRouter =  async (req, res, next) => {
   const getTransactionDetailByIdProduct =  async (req, res, next) => {
     try {
       const connection = await mysql2.promise().getConnection()
+       
+      const sqlGetTransactionDetail = `select * from transactiondetail where product_id = ${req.params.productId} ${req.query.date} ${req.query.sort} ${req.query.pages} `
+    
+      const sqlgetQuantity = `select sum(quantity) as total_bought, sum(totalPrice) as total_amount from transactiondetail where product_id = ${req.params.productId} ${req.query.date}`
+      
+      const sqlTransactionCount = `SELECT COUNT(*) AS count FROM transactiondetail where product_id = ${req.params.productId} ${req.query.date};`
      
-  
-      const sqlGetTransactionDetail = `select * from transactiondetail where product_id = ${req.params.productId} ${req.query.sort}`
+      const [count] = await connection.query(sqlTransactionCount)
       const [result] = await connection.query(sqlGetTransactionDetail);
-      const sqlgetQuantity = `select sum(quantity) as total_bought, sum(totalPrice) as total_amount from transactiondetail where product_id = ${req.params.productId}`
+      const [total] = await connection.query(sqlgetQuantity)
+
       const sqlGetCategoryName = `select categoryName from category where id = ${result[0].productCategory}`
       const sqlGetProductDetail = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where id = ${result[0].product_id}`
-      const [total] = await connection.query(sqlgetQuantity)
+      
+
       const [category] = await connection.query(sqlGetCategoryName)
       const [product] = await connection.query(sqlGetProductDetail)
       connection.release();
-      res.status(200).send({result, category, total, product});
+      res.status(200).send({result, category, total, product, count});
     } catch (error) {
       next(error)
     }

@@ -16,8 +16,8 @@ const getStocksRouter =  async (req, res, next) => {
 
       const {qtyBoxAvailable, qtyBoxTotal, qtyBottleAvailable, qtyBottleTotal, qtyMlAvailable, qtyMlTotal, qtyStripsavailable, qtyStripsTotal, qtyMgAvailable, qtyMgTotal } = result[0]
 
-      const stockLiquid = qtyBottleAvailable + (qtyBoxAvailable * qtyBottleTotal)
-      const stockNonLiquid = qtyStripsavailable + (qtyBoxAvailable * qtyStripsTotal)
+      const stockLiquid = qtyBottleAvailable + (qtyBoxAvailable * 10)
+      const stockNonLiquid = qtyStripsavailable + (qtyBoxAvailable * 10)
 
       calculatedStock = {stockLiquid, stockNonLiquid}
 

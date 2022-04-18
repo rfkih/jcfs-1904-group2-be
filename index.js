@@ -6,6 +6,9 @@ const app = express();
 const path = require("path");
 const port = process.env.API_PORT;
 
+
+
+
 const stocksRouter = require("./src/routers/stocks");
 const userRouter = require("./src/routers/users");
 const productRouter = require("./src/routers/products");
@@ -14,11 +17,15 @@ const transactionRouter = require("./src/routers/transaction");
 const transactiondetailRouter = require("./src/routers/transactionDetails");
 const customordersRouter = require("./src/routers/customOrders/");
 
+
+
 app.use(cors());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
+
+
 
 app.use("/transaction", transactionRouter);
 app.use("/customorders", customordersRouter);
