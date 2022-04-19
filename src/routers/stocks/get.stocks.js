@@ -1,12 +1,12 @@
 const router = require("express").Router();
-const {mysql2} = require("../../config/database");
+const pool = require("../../config/database");
 
 
 
 
 const getStocksRouter =  async (req, res, next) => {
     try {
-        const connection = await mysql2.promise().getConnection()
+        const connection = await pool.promise().getConnection()
   
       const sqlGetStocks = "select * from stocks WHERE product_id = ?";
      
@@ -31,7 +31,7 @@ const getStocksRouter =  async (req, res, next) => {
 
 const getStocksDetailRouter =  async (req, res, next) => {
   try {
-    const connection = await mysql2.promise().getConnection()
+    const connection = await pool.promise().getConnection()
 
     const sqlGetStocks = "select * from stocks WHERE product_id = ?";
 

@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const {mysql2} = require("../../config/database");
+const pool = require("../../config/database");
 
 
 //Get All Product
@@ -8,7 +8,7 @@ const getProductRouter =  async (req, res, next) => {
 
   
     try {
-      const connection = await mysql2.promise().getConnection();
+      const connection = await pool.promise().getConnection();
 
       const sqlGetProducts = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where isDeleted = 0 ${req.query.keyword} ${req.query.sort} ${req.query.pages}`
       const sqlCountProducts = `SELECT COUNT(*) AS count FROM products where isDeleted = 0;`
@@ -38,7 +38,7 @@ const getProductRouter =  async (req, res, next) => {
   const getProductByIdRouter = async (req, res, next) => {
 
     try {
-        const connection = await mysql2.promise().getConnection()
+        const connection = await pool.promise().getConnection()
   
       const sqlGetProductsById = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products WHERE id = ${req.params.productsId}`;
       
@@ -58,7 +58,7 @@ const getProductRouter =  async (req, res, next) => {
 
   const getDeletedProductRouter =  async (req, res, next) => {
     try {
-        const connection = await mysql2.promise().getConnection()
+        const connection = await pool.promise().getConnection()
   
       const sqlGetDeletedProducts = `select id, category_id, productName, productDetails, productIMG, isLiquid, isDeleted, price from products where isDeleted = 1 ${req.query.pages}`;
       const sqlCountDeletedProducts = `SELECT COUNT(*) AS count FROM products where isDeleted = 1;`
@@ -79,7 +79,7 @@ const getProductRouter =  async (req, res, next) => {
 
   const getSoldProductRouter =  async (req, res, next) => {
     try {
-        const connection = await mysql2.promise().getConnection()
+        const connection = await pool.promise().getConnection()
      
    
   

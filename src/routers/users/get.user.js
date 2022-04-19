@@ -1,11 +1,62 @@
+require("dotenv").config();
 const router = require("express").Router();
-const {mysql2} = require("../../config/database");
+const { verify } = require("../../services/token");
+const pool = require("../../config/database");
+
+const getUserRouter = async (req, res, next) => {
+  try {
+    const connection = await pool.promise().getConnection();
+
+    const sqlGetAllUser =
+      "select id, username, gender, email, password, role from users;";
+
+    const [result] = await connection.query(sqlGetAllUser);
+    connection.release();
+
+    res.status(200).send(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getVerifyRouter = async (req, res, next) => {
+  try {
+    const connection = await pool.promise().getConnection();
+
+    const verifiedToken = verify(req.query.token);
+
+    const sqlUpdateVerify = "UPDATE users SET isVerified = true WHERE id = ?";
+    const dataVerify = verifiedToken.id;
+
+    const [result] = await connection.query(sqlUpdateVerify, dataVerify);
+    connection.release();
+
+    res.status(200).send(`<h1> Verification Success </h1>`);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//Get User by Id
+const getUserByIdRouter = async (req, res, next) => {
+  try {
+    const connection = await pool.promise().getConnection();
+    const sqlGetUserById =
+      "SELECT id, username, name, age, gender, email, photo from users WHERE id = ?";
+    const [result] = await connection.query(sqlGetUserById, req.params.id);
+    connection.release();
+
+    res.status(200).send(result);
+  } catch (error) {
+    next(error);
+  }
+};
 
 
 // Get All User
 const getUserRouterAdmin =  async (req, res, next) => {
     try {
-      const connection = await mysql2.promise().getConnection()
+      const connection = await pool.promise().getConnection()
       console.log(req.query.pages);
   
       const sqlGetAllUser = `select id, username, name, gender, email, password, role from users where role = "user" ${req.query.keywordUser} ${req.query.sortUser} ${req.query.pages};`;
@@ -24,7 +75,7 @@ const getUserRouterAdmin =  async (req, res, next) => {
 
   const getUserbyIdRouterAdmin =  async (req, res, next) => {
     try {
-      const connection = await mysql2.promise().getConnection()
+      const connection = await pool.promise().getConnection()
 
       console.log();
   
@@ -45,7 +96,10 @@ const getUserRouterAdmin =  async (req, res, next) => {
     }
   };
 
-  router.get("/admin/:UserId", getUserbyIdRouterAdmin)
+  router.get("/", getUserRouter);
+  router.get("/verify", getVerifyRouter);
   router.get("/admin", getUserRouterAdmin)
+  router.get("/admin/:UserId", getUserbyIdRouterAdmin)
+  router.get("/:id", getUserByIdRouter);
 
   module.exports = router;

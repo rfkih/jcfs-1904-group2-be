@@ -1,11 +1,11 @@
 const router = require("express").Router();
-const {mysql2} = require("../../config/database");
+const pool = require("../../config/database");
 
-
-const putUpdateStocksRouter =  async (req, res, next) => {
+const putUpdateStocksRouter = async (req, res, next) => {
+ 
 
     try {
-        const connection = await mysql2.promise().getConnection()
+        const connection = await pool.promise().getConnection()
         
         
         try {
@@ -58,19 +58,17 @@ const putUpdateStocksRouter =  async (req, res, next) => {
                 message: `Stock berhasil di update`,
                 
             });
-
-        } catch (error) {
-            next(error)
-        } 
+     
     } catch (error) {
         
         next(error);
     }
+  } catch (error) {
+    connection.rollback();
+    next(error);
+  }
 };
 
+router.put("/:productsId", putUpdateStocksRouter);
 
-
-router.put("/:productsId", putUpdateStocksRouter)
-
-
-module.exports = router
+module.exports = router;
