@@ -6,7 +6,7 @@ const putUpdateStocksRouter = async (req, res, next) => {
 
     try {
         const connection = await pool.promise().getConnection()
-        
+        console.log(req.body);
         
         try {
 
@@ -29,7 +29,7 @@ const putUpdateStocksRouter = async (req, res, next) => {
             const sqlPostLog = "INSERT INTO data_logging SET ?"
 
             const dataLogIn = [{
-                user_id: 1,
+                user_id: req.body.userId,
                 product_id: req.body.params.id,
                 stock_in: writtenStock,
                 status: 'edit',
