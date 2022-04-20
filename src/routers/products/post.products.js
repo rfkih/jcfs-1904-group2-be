@@ -54,7 +54,8 @@ const postProductRouter = async (req, res, next) => {
       const sqlPostLog = "INSERT INTO data_logging SET ?";
       const dataLogLiquid = [
         {
-          user_id: `${req.body.data}`,
+          user_id: `${req.body.userId}`,
+          username: `${req.body.username}`,
           product_id: result.insertId,
           stock_in: stockLiquid,
           status: "add",
@@ -64,6 +65,7 @@ const postProductRouter = async (req, res, next) => {
       const dataLoqNonLiquid = [
         {
           user_id: `${req.body.data}`,
+          username: `${req.body.username}`,
           product_id: result.insertId,
           stock_in: stockNonLiquid,
           status: "add",

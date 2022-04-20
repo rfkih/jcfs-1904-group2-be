@@ -29,6 +29,7 @@ const putUpdateStocksRouter = async (req, res, next) => {
 
             const dataLogIn = [{
                 user_id: req.body.userId,
+                username: req.body.username,
                 product_id: req.body.params.id,
                 stock_in: writtenStock,
                 status: 'edit',
@@ -36,6 +37,7 @@ const putUpdateStocksRouter = async (req, res, next) => {
 
             const dataLogOut = [{
                     user_id: 1,
+                    username: req.body.username,
                     product_id: req.body.params.id,
                     stock_out: writtenStock,
                     status: 'edit',

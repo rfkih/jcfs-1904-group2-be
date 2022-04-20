@@ -98,6 +98,25 @@ const getProductRouter =  async (req, res, next) => {
     }
   };
 
+
+  const getProductNameRouter =  async (req, res, next) => {
+    try {
+      const connection = await pool.promise().getConnection()
+  
+      const sqlGetProductName = `select id, productName from products `
+     
+      const [result] = await connection.query(sqlGetProductName);
+
+      connection.release();
+  
+      res.status(200).send(result);
+    } catch (error) {
+      next(error)
+    }
+  };
+
+
+  router.get("/name", getProductNameRouter)
   router.get("/sold", getSoldProductRouter)
   router.get("/deleted", getDeletedProductRouter)
   router.get("/:productsId", getProductByIdRouter)
