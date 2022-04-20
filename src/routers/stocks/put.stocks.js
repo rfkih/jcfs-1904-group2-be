@@ -6,8 +6,7 @@ const putUpdateStocksRouter = async (req, res, next) => {
 
     try {
         const connection = await pool.promise().getConnection()
-        console.log(req.body);
-        
+       
         try {
 
             let stock = 0

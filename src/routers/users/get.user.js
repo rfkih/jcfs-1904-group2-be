@@ -57,7 +57,7 @@ const getUserByIdRouter = async (req, res, next) => {
 const getUserRouterAdmin =  async (req, res, next) => {
     try {
       const connection = await pool.promise().getConnection()
-      console.log(req.query.pages);
+      
   
       const sqlGetAllUser = `select id, username, name, gender, email, password, role from users where role = "user" ${req.query.keywordUser} ${req.query.sortUser} ${req.query.pages};`;
       const sqlCountUser = `SELECT COUNT(*) AS user_count FROM users where role = "user";`;

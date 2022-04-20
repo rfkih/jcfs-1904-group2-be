@@ -5,9 +5,9 @@ const pool = require("../../config/database");
 const getTransactionRouter = async (req, res, next) => {
   try {
     const connection = await pool.promise().getConnection();
-
-    const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction ${req.query.date} ${req.query.status} ${req.query.keywordTransaction} ${req.query.sortTransactions} ${req.query.pages}`;
-    const sqlCountTransaction = `SELECT COUNT(*) AS count FROM transaction`;
+    
+    const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction ${req.query.date} ${req.query.status} ${req.query.keywordTransaction} ${req.query.sortTransactions} ${req.query.isCustom} ${req.query.pages}`;
+    const sqlCountTransaction = `SELECT COUNT(*) AS count FROM transaction ${req.query.date} ${req.query.status} ${req.query.keywordTransaction} ${req.query.sortTransactions} ${req.query.isCustom}`;
 
     const [result] = await connection.query(sqlGetTransaction);
     const [count] = await connection.query(sqlCountTransaction);
