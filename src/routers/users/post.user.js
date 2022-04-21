@@ -49,7 +49,7 @@ const postLoginUserRouter = async (req, res, next) => {
     const { username, password } = req.body;
 
     const sqlLoginUser =
-      "SELECT id, username, password, isVerified, role FROM users WHERE username = ?;";
+      "SELECT id, username, password, isVerified, role, photo FROM users WHERE username = ?;";
     const data = req.body.username;
 
     const [result] = await connection.query(sqlLoginUser, data);

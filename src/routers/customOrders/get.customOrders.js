@@ -1,11 +1,11 @@
 const router = require("express").Router();
-const {mysql2} = require("../../config/database");
+const pool = require("../../config/database");
 
 
 
 const getCustomOrderRouter =  async (req, res, next) => {
     try {
-        const connection = await mysql2.promise().getConnection()
+        const connection = await pool.promise().getConnection()
   
       const sqlGetOrder = `select * from custom_order where status = 'waiting';`;
       
@@ -23,7 +23,7 @@ const getCustomOrderRouter =  async (req, res, next) => {
 
   const getCustomOrderByIdRouter =  async (req, res, next) => {
     try {
-        const connection = await mysql2.promise().getConnection()
+        const connection = await pool.promise().getConnection()
   
       const sqlGetOrder = `select * from custom_order where id = ${req.params.orderId};`;
       

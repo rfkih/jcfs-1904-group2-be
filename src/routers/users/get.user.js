@@ -42,7 +42,7 @@ const getUserByIdRouter = async (req, res, next) => {
   try {
     const connection = await pool.promise().getConnection();
     const sqlGetUserById =
-      "SELECT id, username, fullName, age, gender, address, email, photo from users WHERE id = ?";
+      "SELECT id, username, name, age, gender, email, photo from users WHERE id = ?";
     const [result] = await connection.query(sqlGetUserById, req.params.id);
     connection.release();
 
@@ -57,7 +57,7 @@ const getUserByIdRouter = async (req, res, next) => {
 const getUserRouterAdmin =  async (req, res, next) => {
     try {
       const connection = await pool.promise().getConnection()
-      console.log(req.query.pages);
+      
   
       const sqlGetAllUser = `select id, username, name, gender, email, password, role from users where role = "user" ${req.query.keywordUser} ${req.query.sortUser} ${req.query.pages};`;
       const sqlCountUser = `SELECT COUNT(*) AS user_count FROM users where role = "user";`;
@@ -97,9 +97,9 @@ const getUserRouterAdmin =  async (req, res, next) => {
   };
 
   router.get("/", getUserRouter);
-router.get("/verify", getVerifyRouter);
-router.get("/:id", getUserByIdRouter);
-  router.get("/admin/:UserId", getUserbyIdRouterAdmin)
+  router.get("/verify", getVerifyRouter);
   router.get("/admin", getUserRouterAdmin)
+  router.get("/admin/:UserId", getUserbyIdRouterAdmin)
+  router.get("/:id", getUserByIdRouter);
 
   module.exports = router;
