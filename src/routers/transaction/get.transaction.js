@@ -83,15 +83,16 @@ const getTransactionByIdRouter = async (req, res, next) => {
   try {
     const connection = await pool.promise().getConnection();
 
-    const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction where id = ${req.params.transactionId}`;
+    const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, address_id, isByPresciption, created_at from transaction where id = ${req.params.transactionId}`;
 
     const [result] = await connection.query(sqlGetTransaction);
-
+  
     sqlGetUser = `select * from users where id = ?`;
-
+    sqlGetAddress = `select * from address where id = ?`
     const [user] = await connection.query(sqlGetUser, result[0].user_id);
+    const [address] = await connection.query(sqlGetAddress, result[0].address_id)
     connection.release();
-    res.status(200).send({ result, user });
+    res.status(200).send({ result, user, address });
   } catch (error) {
     next(error);
   }
