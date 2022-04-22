@@ -99,8 +99,7 @@ const putAddStocksRouter = async (req, res, next) => {
             const result =  await connection.query(sqlUpdateProduct, dataUpdateProduct) 
            
             res.status(201).send({
-                message: `Add Stock Success`,
-                
+                message: `Add Stock Success`,               
             });
      
     } catch (error) {
