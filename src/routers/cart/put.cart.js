@@ -9,16 +9,16 @@ const putUpdateQuantityRouterByProduct =  async (req, res, next) => {
     try {
 
         const connection = await pool.promise().getConnection()
-        console.log(req.body.params);
+       
     const totalPrice = ( req.body.params.price * req.body.params.productQuantity)
 
       const sqlPutQuantity = `UPDATE cart SET productQuantity = ${req.body.params.productQuantity}, totalPrice = ${totalPrice} WHERE id = ${req.body.params.id}`;
-     
+      
      
       const [result] = await connection.query(sqlPutQuantity);
       
       connection.release();
-        console.log(result);
+        
       res.status(200).send(result);
     } catch (error) {
       next(error)
@@ -50,7 +50,7 @@ const putUpdateQuantityRouterByProduct =  async (req, res, next) => {
 
         const connection = await pool.promise().getConnection()
 
-        console.log(req.body.params);
+        console.log(sqlPutDelete);
       const sqlPutDelete = `UPDATE cart SET isActive = 0 WHERE user_id = ${req.body.params.userId}`;
      
       const [result] = await connection.query(sqlPutDelete);

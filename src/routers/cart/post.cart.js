@@ -8,25 +8,26 @@ const postProductToCart =  async (req, res, next) => {
     try {
 
         const connection = await pool.promise().getConnection()
-
+        console.log(req.body.params.isCustom);
+        const totalPrice = req.body.params.product.price * req.body.params.productQuantity
 
         const sqlPostCart = "INSERT INTO cart SET ?";
 
         const dataProduct = [
             {
-              category_id: req.body.newProduct.category_id,
-              productName: req.body.newProduct.productName,
-              productDetails: req.body.newProduct.productDetails,
-              productIMG: req.body.newProduct.productIMG,
-              isLiquid: req.body.newProduct.isLiquid,
-              isDeleted: req.body.newProduct.isDeleted,
-              price: req.body.newProduct.price,
+              user_id: req.body.params.userId,
+              product_id: req.body.params.product.id,
+              price: req.body.params.product.price,
+              productQuantity: req.body.params.productQuantity,
+              totalPrice: totalPrice,
+              isActive: 1,
+              isCustom: req.body.params.isCustom,
             },
           ];
     
      
      
-        const [result] = await connection.query(sqlPutQuantity);
+        const [result] = await connection.query(sqlPostCart, dataProduct);
       
       connection.release();
   
