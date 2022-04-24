@@ -14,6 +14,7 @@ const transactionRouter = require("./src/routers/transaction");
 const transactiondetailRouter = require("./src/routers/transactionDetails");
 const customordersRouter = require("./src/routers/customOrders/");
 const dataLogRouter = require("./src/routers/dataLog")
+const cartRouter = require("./src/routers/cart")
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -30,6 +31,7 @@ app.use("/categories", categoriesRouter);
 app.use("/products", productRouter);
 app.use("/datalog", dataLogRouter)
 app.use("/users", userRouter);
+app.use("/cart", cartRouter)
 app.get("/", (req, res) => {
   res.status(200).send("API IS RUNNING");
 });
