@@ -50,7 +50,7 @@ const putUpdateQuantityRouterByProduct =  async (req, res, next) => {
 
         const connection = await pool.promise().getConnection()
 
-        console.log(sqlPutDelete);
+        
       const sqlPutDelete = `UPDATE cart SET isActive = 0 WHERE user_id = ${req.body.params.userId}`;
      
       const [result] = await connection.query(sqlPutDelete);

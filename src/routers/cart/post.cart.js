@@ -8,7 +8,7 @@ const postProductToCart =  async (req, res, next) => {
     try {
 
         const connection = await pool.promise().getConnection()
-        console.log(req.body.params.isCustom);
+       
         const totalPrice = req.body.params.product.price * req.body.params.productQuantity
 
         const sqlPostCart = "INSERT INTO cart SET ?";
