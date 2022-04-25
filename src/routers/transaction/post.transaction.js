@@ -28,7 +28,7 @@ const postTransactionRouter = async (req, res, next) => {
         
 
         req.body.cart.forEach( async (item)=>{
-                console.log(item);
+                
             const sqlPostTransactionDetail = "INSERT INTO transactiondetail SET ?";
             
             try {
@@ -43,7 +43,7 @@ const postTransactionRouter = async (req, res, next) => {
                         price: item.price,
                         quantity: item.productQuantity,
                         totalPrice: item.totalPrice,
-                        statusTransactiondetail: 'waiting',
+                        statusTransactiondetail: 'confirmed',
                     }
                 ]
 

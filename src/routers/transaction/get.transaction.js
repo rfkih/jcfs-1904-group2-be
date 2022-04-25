@@ -90,9 +90,17 @@ const getTransactionByIdRouter = async (req, res, next) => {
     sqlGetUser = `select * from users where id = ?`;
     sqlGetAddress = `select * from address where id = ?`
     const [user] = await connection.query(sqlGetUser, result[0].user_id);
-    const [address] = await connection.query(sqlGetAddress, result[0].address_id)
-    connection.release();
-    res.status(200).send({ result, user, address });
+    console.log(result[0].address_id)
+    if (result[0].address_id) {
+      const [address] = await connection.query(sqlGetAddress, result[0].address_id)
+      connection.release();
+      res.status(200).send({ result, user, address });
+    } else {
+      connection.release();
+      res.status(200).send({ result, user });
+    }
+  
+    
   } catch (error) {
     next(error);
   }
