@@ -18,7 +18,7 @@ jobs:
         with:
           host: ${{secrets.SSH_HOST}}
           username: ${{secrets.SSH_USERNAME}}
-          password: "PurwadhikaJCWD;"
+          password: PurwadhikaJCWD;
           port: 22
           script: |
             cd ~/app/2-pharmacy-api
