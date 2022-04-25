@@ -12,7 +12,6 @@ const postTransactionRouter = async (req, res, next) => {
       
       try {
         const sqlPostTransaction = "INSERT INTO transaction SET ?";
-        console.log(req.body.userId);
         
         const dataTransaction = [
           {
@@ -55,61 +54,18 @@ const postTransactionRouter = async (req, res, next) => {
             }
 
             
-    });
+        });
+
+        try {
+
+            const deleteCartSql = `DELETE FROM cart WHERE user_id = ${req.body.userId} and isActive = 1`;
+            const [result] = await connection.query(deleteCartSql)
+            
+        } catch (error) {
+            next(error);
+        }
 
   
-        // const dataStock = [
-        //   {
-        //     product_id: result.insertId,
-        //     qtyBoxAvailable: req.body.newStock.qtyBoxAvailable,
-        //     qtyBoxTotal: req.body.newStock.qtyBoxTotal,
-        //     qtyBottleAvailable: req.body.newStock.qtyBottleAvailable,
-        //     qtyBottleTotal: req.body.newStock.qtyBottleTotal,
-        //     qtyMlAvailable: req.body.newStock.qtyMlAvailable,
-        //     qtyMlTotal: req.body.newStock.qtyMlTotal,
-        //     qtyStripsavailable: req.body.newStock.qtyStripsavailable,
-        //     qtyStripsTotal: req.body.newStock.qtyStripsTotal,
-        //     qtyMgAvailable: req.body.newStock.qtyMgAvailable,
-        //     qtyMgTotal: req.body.newStock.qtyMgTotal,
-        //   },
-        // ];
-  
-        // const stockLiquid =
-        //   parseInt(req.body.newStock.qtyBottleAvailable) +
-        //   parseInt(req.body.newStock.qtyBoxAvailable * 10);
-        // const stockNonLiquid =
-        //   parseInt(req.body.newStock.qtyStripsavailable) +
-        //   parseInt(req.body.newStock.qtyBoxAvailable * 10);
-  
-        // const sqlPostLog = "INSERT INTO data_logging SET ?";
-        // const dataLogLiquid = [
-        //   {
-        //     user_id: `${req.body.userId}`,
-        //     username: `${req.body.username}`,
-        //     product_id: result.insertId,
-        //     stock_in: stockLiquid,
-        //     status: "add",
-        //   },
-        // ];
-  
-        // const dataLoqNonLiquid = [
-        //   {
-        //     user_id: `${req.body.data}`,
-        //     username: `${req.body.username}`,
-        //     product_id: result.insertId,
-        //     stock_in: stockNonLiquid,
-        //     status: "add",
-        //   },
-        // ];
-  
-        
-        // if (req.body.newProduct.isLiquid) {
-        //   await connection.query(sqlPostLog, dataLogLiquid);
-        // } else {
-        //   await connection.query(sqlPostLog, dataLoqNonLiquid);
-        // }
-  
-        // await connection.query(sqlPostStocks, dataStock);
   
         connection.commit();
         res.send("input transaction success");
