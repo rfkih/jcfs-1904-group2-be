@@ -143,9 +143,36 @@ const getTransactionByYearRouter = async (req, res, next) => {
   }
 };
 
+
+//Get Transaction by user id
+
+const getTransactionByUserIdRouter = async (req, res, next) => {
+  try {
+    const connection = await pool.promise().getConnection();
+
+    console.log(req.query.keyword);
+
+    const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, address_id, isByPresciption, created_at from transaction where user_id = ${req.params.userId} ${req.query.keyword} ${req.query.status} ${req.query.sort} ${req.query.pages} `;
+    const sqlCountTransaction = `SELECT COUNT(*) AS count FROM transaction where user_id = ${req.params.userId} ${req.query.keyword} ${req.query.status}`
+    const [result] = await connection.query(sqlGetTransaction);
+    const [count] = await connection.query(sqlCountTransaction)
+
+    connection.release();
+
+    res.status(200).send({result, count});
+  
+  
+    
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 router.get("/year", getTransactionByYearRouter);
 router.get("/date", getTransactionByDateRouter);
 router.get("/completed", getSumCompletedTransactionRouter);
+router.get("/user/:userId", getTransactionByUserIdRouter)
 router.get("/:transactionId", getTransactionByIdRouter);
 router.get("/", getTransactionRouter);
 

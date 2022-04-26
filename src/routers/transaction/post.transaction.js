@@ -79,7 +79,7 @@ const postTransactionRouter = async (req, res, next) => {
                       ]
 
                      const [stock] = await connection.query(sqlUpdateProduct, stockData)
-                     console.log(stockData);
+                     
                       
                     } else {
                       stockData = [ 
@@ -89,7 +89,7 @@ const postTransactionRouter = async (req, res, next) => {
                         }
                       ]  
                       const [stock] = await connection.query(sqlUpdateProduct, stockData)  
-                      console.log(stockData);                  
+                                      
                     }
     
                     const [detail] = await connection.query(sqlPostTransactionDetail, transactionDetailData);
@@ -98,14 +98,8 @@ const postTransactionRouter = async (req, res, next) => {
                     next(error);
                   }
                   
-                }else{
-                  res.status(201).send({
-                    message: `Stock is not enough`,
-                  });
-
                 }
 
-              
               
             } catch (error) {
               
