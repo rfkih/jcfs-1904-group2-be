@@ -30,28 +30,88 @@ const postTransactionRouter = async (req, res, next) => {
         req.body.cart.forEach( async (item)=>{
                 
             const sqlPostTransactionDetail = "INSERT INTO transactiondetail SET ?";
+            const sqlGetStocks = `select * from stocks WHERE product_id = ${item.product_id};`
+            const sqlUpdateProduct = `UPDATE stocks SET ? WHERE product_id = ${item.product_id}`;
             
-            try {
-                transactionDetailData = [
-                    {
-                        transaction_id: result.insertId,
-                        product_id: item.product_id,
-                        productCategory: item.category_id,
-                        productName: item.productName,
-                        productDescription: item.productDetails,
-                        productImg: item.productIMG,
-                        price: item.price,
-                        quantity: item.productQuantity,
-                        totalPrice: item.totalPrice,
-                        statusTransactiondetail: 'confirmed',
-                    }
-                ]
 
-                const [detail] = await connection.query(sqlPostTransactionDetail, transactionDetailData);
-                
+            try {
+              
+              const [result] = await connection.query(sqlGetStocks);
+              
+              const {qtyBoxAvailable, qtyBoxTotal, qtyBottleAvailable, qtyBottleTotal, qtyMlAvailable, qtyMlTotal, qtyStripsavailable, qtyStripsTotal, qtyMgAvailable, qtyMgTotal } = result[0]
+              
+              const transactionDetailData = [
+                {
+                    transaction_id: result.insertId,
+                    product_id: item.product_id,
+                    productCategory: item.category_id,
+                    productName: item.productName,
+                    productDescription: item.productDetails,
+                    productImg: item.productIMG,
+                    price: item.price,
+                    quantity: item.productQuantity,
+                    totalPrice: item.totalPrice,
+                    statusTransactiondetail: 'waiting',
+                }
+            ]
+              let calculatedStock = 0
+                if (item.isLiquid) {
+                   calculatedStock = qtyBottleAvailable + (qtyBoxAvailable * 10)  
+                }else{
+                  calculatedStock = qtyStripsavailable + (qtyBoxAvailable * 10)
+                }
+
+                calculatedStock =  (calculatedStock - item.productQuantity)
+
+                if (calculatedStock >= 0) {
+                  try {
+
+                    
+                    var box = (Math.floor(calculatedStock / 10))
+                    var qty = (calculatedStock - (box * 10))
+
+                    if (item.isLiquid) {
+                      stockData = [ 
+                        {
+                          qtyBoxAvailable: box,
+                          qtyBottleAvailable: qty
+                        }
+                      ]
+
+                     const [stock] = await connection.query(sqlUpdateProduct, stockData)
+                     console.log(stockData);
+                      
+                    } else {
+                      stockData = [ 
+                        {
+                          qtyBoxAvailable: box,
+                          qtyStripsavailable: qty
+                        }
+                      ]  
+                      const [stock] = await connection.query(sqlUpdateProduct, stockData)  
+                      console.log(stockData);                  
+                    }
+    
+                    const [detail] = await connection.query(sqlPostTransactionDetail, transactionDetailData);
+                    
+                  } catch (error) {
+                    next(error);
+                  }
+                  
+                }else{
+                  res.status(201).send({
+                    message: `Stock is not enough`,
+                  });
+
+                }
+
+              
+              
             } catch (error) {
-                next(error);
+              
             }
+            
+            
 
             
         });
