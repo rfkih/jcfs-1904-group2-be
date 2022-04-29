@@ -9,7 +9,7 @@ const postCustomOrderRouter = async (req, res, next) => {
     try {
       const connection = await pool.promise().getConnection();
         
-      console.log(req.body);
+      
 
       const sqlPostStocks = "INSERT INTO custom_order SET ?";
   

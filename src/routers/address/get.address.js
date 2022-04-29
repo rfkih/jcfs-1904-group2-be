@@ -29,7 +29,7 @@ const getAddressByIdRouter =  async (req, res, next) => {
 
         const connection = await pool.promise().getConnection()
 
-        console.log(req.query);
+        
       const sqlGetAddress = `select * from address where id = ${req.query.value} `
    
       const [result] = await connection.query(sqlGetAddress);

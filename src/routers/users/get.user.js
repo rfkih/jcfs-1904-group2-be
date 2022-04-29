@@ -77,7 +77,7 @@ const getUserRouterAdmin =  async (req, res, next) => {
     try {
       const connection = await pool.promise().getConnection()
 
-      console.log();
+     
   
       const sqlGetUserById = `select id, username, name, gender, photo, email, password, role from users where id = ${req.params.UserId};`;
 

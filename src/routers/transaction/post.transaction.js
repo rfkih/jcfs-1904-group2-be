@@ -32,17 +32,17 @@ const postTransactionRouter = async (req, res, next) => {
             const sqlPostTransactionDetail = "INSERT INTO transactiondetail SET ?";
             const sqlGetStocks = `select * from stocks WHERE product_id = ${item.product_id};`
             const sqlUpdateProduct = `UPDATE stocks SET ? WHERE product_id = ${item.product_id}`;
-            
+            const transaction_id = result.insertId
 
             try {
               
               const [result] = await connection.query(sqlGetStocks);
               
               const {qtyBoxAvailable, qtyBoxTotal, qtyBottleAvailable, qtyBottleTotal, qtyMlAvailable, qtyMlTotal, qtyStripsavailable, qtyStripsTotal, qtyMgAvailable, qtyMgTotal } = result[0]
-              
+             
               const transactionDetailData = [
                 {
-                    transaction_id: result.insertId,
+                    transaction_id: transaction_id,
                     product_id: item.product_id,
                     productCategory: item.category_id,
                     productName: item.productName,
@@ -93,6 +93,7 @@ const postTransactionRouter = async (req, res, next) => {
                     }
     
                     const [detail] = await connection.query(sqlPostTransactionDetail, transactionDetailData);
+                   
                     
                   } catch (error) {
                     next(error);

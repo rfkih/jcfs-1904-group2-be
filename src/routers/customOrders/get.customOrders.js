@@ -53,7 +53,7 @@ const getCustomOrderRouter =  async (req, res, next) => {
       
   
       const [result] = await connection.query(sqlGetOrder );
-      console.log(result);
+      
       connection.release();
   
       res.status(200).send(result);

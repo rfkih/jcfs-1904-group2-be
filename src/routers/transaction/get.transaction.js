@@ -86,18 +86,21 @@ const getTransactionByIdRouter = async (req, res, next) => {
     const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, address_id, isByPresciption, created_at from transaction where id = ${req.params.transactionId}`;
 
     const [result] = await connection.query(sqlGetTransaction);
-  
+    console.log(result[0].id);
+    sqlGetTransactionDetail = `select * from transactiondetail where transaction_id = ? ;`
     sqlGetUser = `select * from users where id = ?`;
     sqlGetAddress = `select * from address where id = ?`
+
+    const [transactiondetail] = await connection.query(sqlGetTransactionDetail, result[0].id)
     const [user] = await connection.query(sqlGetUser, result[0].user_id);
-    console.log(result[0].address_id)
+   
     if (result[0].address_id) {
       const [address] = await connection.query(sqlGetAddress, result[0].address_id)
       connection.release();
-      res.status(200).send({ result, user, address });
+      res.status(200).send({ result, user, address, transactiondetail });
     } else {
       connection.release();
-      res.status(200).send({ result, user });
+      res.status(200).send({ result, user, transactiondetail});
     }
   
     
