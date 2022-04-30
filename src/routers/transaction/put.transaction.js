@@ -25,7 +25,7 @@ const putTransactionStatusRouter =  async (req, res, next) => {
   try {
       const connection = await pool.promise().getConnection();
      
-      const sqlInputAddress = `UPDATE transaction SET transactionStatus = 'paid' where id = ${req.params.transactionId}`;
+      const sqlInputAddress = `UPDATE transaction SET transactionStatus = '${req.body.params.status}' where id = ${req.params.transactionId}`;
 
       const [result] = await connection.query(sqlInputAddress);
       connection.release();

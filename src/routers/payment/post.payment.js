@@ -7,8 +7,6 @@ const upload = require("../../services/upload");
 
 const postPaymentProof =  async (req, res, next) => {
     try {
-
-        console.log(req.body.formState.paymentPhoto);
         const connection = await pool.promise().getConnection();
 
         const sqlPostCart = "INSERT INTO payment_proof SET ?";
