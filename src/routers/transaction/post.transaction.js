@@ -15,7 +15,7 @@ const postTransactionRouter = async (req, res, next) => {
         
         const dataTransaction = [
           {
-            invoice:"INV/" + Date.now(),
+            invoice:"INV//" + Date.now(),
             user_id: req.body.userId,
             transactionStatus: 'waiting',
             totalPrice: req.body.subTotal,
@@ -100,14 +100,10 @@ const postTransactionRouter = async (req, res, next) => {
                   }
                   
                 }
-
-              
+             
             } catch (error) {
               
             }
-            
-            
-
             
         });
 
@@ -119,8 +115,6 @@ const postTransactionRouter = async (req, res, next) => {
         } catch (error) {
             next(error);
         }
-
-  
   
         connection.commit();
         res.send("input transaction success");
@@ -132,7 +126,6 @@ const postTransactionRouter = async (req, res, next) => {
       next(error);
     }
   };
-
 
 
   router.post("/", postTransactionRouter);

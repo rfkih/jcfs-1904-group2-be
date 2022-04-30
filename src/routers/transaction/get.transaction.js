@@ -86,7 +86,7 @@ const getTransactionByIdRouter = async (req, res, next) => {
     const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, address_id, isByPresciption, created_at from transaction where id = ${req.params.transactionId}`;
 
     const [result] = await connection.query(sqlGetTransaction);
-    console.log(result[0].id);
+    
     sqlGetTransactionDetail = `select * from transactiondetail where transaction_id = ? ;`
     sqlGetUser = `select * from users where id = ?`;
     sqlGetAddress = `select * from address where id = ?`
@@ -153,7 +153,6 @@ const getTransactionByUserIdRouter = async (req, res, next) => {
   try {
     const connection = await pool.promise().getConnection();
 
-    console.log(req.query.keyword);
 
     const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, address_id, isByPresciption, created_at from transaction where user_id = ${req.params.userId} ${req.query.keyword} ${req.query.status} ${req.query.sort} ${req.query.pages} `;
     const sqlCountTransaction = `SELECT COUNT(*) AS count FROM transaction where user_id = ${req.params.userId} ${req.query.keyword} ${req.query.status}`

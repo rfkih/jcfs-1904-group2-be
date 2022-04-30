@@ -16,6 +16,7 @@ const customordersRouter = require("./src/routers/customOrders/");
 const dataLogRouter = require("./src/routers/dataLog")
 const cartRouter = require("./src/routers/cart")
 const addressRouter = require("./src/routers/address")
+const paymentRouter = require("./src/routers/payment")
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -25,6 +26,7 @@ app.use(express.static("public"));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/transaction", transactionRouter);
+app.use("/payment", paymentRouter)
 app.use("/customorders", customordersRouter);
 app.use("/transactiondetails", transactiondetailRouter);
 app.use("/stocks", stocksRouter);
