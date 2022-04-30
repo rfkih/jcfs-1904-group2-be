@@ -7,7 +7,7 @@ const pool = require("../../config/database");
 const getPaymentRouter =  async (req, res, next) => {
     try {
 
-      console.log(req);
+      
 
         const connection = await pool.promise().getConnection()
 
@@ -33,7 +33,7 @@ const getPaymentRouter =  async (req, res, next) => {
   
       const sqlGetAddress = `select * from payment where bank like '%${req.query.selected}%'`
 
-      console.log(sqlGetAddress);
+    
    
       const [result] = await connection.query(sqlGetAddress);
     
