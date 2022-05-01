@@ -137,10 +137,16 @@ const putTransactionSendRouter =  async (req, res, next) => {
 
 
       detail.forEach( async(item) => {
+        console.log(item);
        
         const sqlUpdateLog = `UPDATE data_logging SET ? WHERE id = ${item.log_id}`
         const sqlGetStocks = `select * from stocks WHERE product_id = ${item.product_id};`
+        const sqlUpdateTransactionDetail = `UPDATE transactiondetail SET statusTransactionDetail = 'complete' where id = ${item.id}`
         const sqlUpdateStocks = `UPDATE stocks SET ? WHERE product_id = ${item.product_id}`;
+
+        const [detail] = await connection.query(sqlUpdateTransactionDetail)
+        console.log(sqlUpdateTransactionDetail);
+        console.log(detail);
             
             try {
 
