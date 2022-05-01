@@ -37,29 +37,132 @@ const putTransactionStatusRouter =  async (req, res, next) => {
 };
 
 
-const putTransactionSendRouter =  async (req, res, next) => {  
+const putTransactionRejectRouter =  async (req, res, next) => {  
   try {
       const connection = await pool.promise().getConnection();
-      const sqlGetTransactionDetail = ` select * from transactiondetail where transaction_id = ${req.params.transactionId} `
-      const sqlInputAddress = `UPDATE transaction SET transactionStatus = '${req.body.params.status}' where id = ${req.params.transactionId}`;
 
+      const sqlGetTransactionDetail = ` select * from transactiondetail where transaction_id = ${req.params.transactionId} `
+      const sqlRejectRouter = `UPDATE transaction SET transactionStatus = '${req.body.params.status}' where id = ${req.params.transactionId}`;
+
+      const [result] = await connection.query(sqlRejectRouter);
       const [detail] = await connection.query(sqlGetTransactionDetail)
-      const [result] = await connection.query(sqlInputAddress);
-    
-      detail.forEach( async(item) => {
-        // console.log(item)
+
+      detail.forEach(async(item) => {
         const sqlUpdateLog = `UPDATE data_logging SET ? WHERE id = ${item.log_id}`
         const sqlGetStocks = `select * from stocks WHERE product_id = ${item.product_id};`
         const sqlUpdateStocks = `UPDATE stocks SET ? WHERE product_id = ${item.product_id}`;
 
-            const dataBought = [{
-                stock_out: item.quantity,
-                progress: 0,
-                status: 'bought',
-                }]
+        const dataFailed = [{
+          progress: 0,
+          status: 'failed',
+          }]
+
+          try {
+            const [log] = await connection.query(sqlUpdateLog, dataFailed)
+            const [stock] = await connection.query(sqlGetStocks);
+
+            const {qtyBoxAvailable, qtyBoxTotal, qtyBottleAvailable, qtyBottleTotal, qtyMlAvailable, qtyMlTotal, qtyStripsavailable, qtyStripsTotal, qtyMgAvailable, qtyMgTotal } = stock[0]
+              
+              let calculatedStock = 0
+                if (item.isLiquid) {
+                   calculatedStock = qtyBottleAvailable + (qtyBoxAvailable * 10)  
+                }else{
+                  calculatedStock = qtyStripsavailable + (qtyBoxAvailable * 10)
+                }
+
+                calculatedStock =  (calculatedStock + item.quantity)
+
+                try {
+
+                  var box = (Math.floor(calculatedStock / 10))
+                  var qty = (calculatedStock - (box * 10))
+
+                  if (item.isLiquid) {
+                    stockData = [ 
+                      {
+                        qtyBoxAvailable: box,
+                        qtyBottleAvailable: qty
+                      }
+                    ]
+
+                   const [stock] = await connection.query(sqlUpdateStocks, stockData)
+                   console.log(stock);
+                    
+                  } else {
+                    stockData = [ 
+                      {
+                        qtyBoxAvailable: box,
+                        qtyStripsavailable: qty
+                      }
+                    ]  
+                    const [stock] = await connection.query(sqlUpdateStocks, stockData)  
+                      console.log(stock);
+                  }
+                  
+                } catch (error) {
+                  
+                }
+            
+
+          } catch (error) {
+            
+          }
+      
+
+      })
+
+
+      connection.release();
+      res.status(200).send(result);
+       
+  } catch (error) {
+    next(error)
+  }
+};
+
+
+const putTransactionSendRouter =  async (req, res, next) => {  
+  try {
+      const connection = await pool.promise().getConnection();
+      const sqlGetTransactionDetail = ` select * from transactiondetail where transaction_id = ${req.params.transactionId} `
+      const sqlGetTransaction = `select * from transaction where id = ${req.params.transactionId} `
+      const sqlPutTransaction = `UPDATE transaction SET transactionStatus = '${req.body.params.status}' where id = ${req.params.transactionId}`;
+
+      const [detail] = await connection.query(sqlGetTransactionDetail)
+      const [result] = await connection.query(sqlPutTransaction);
+      const [transaction] = await connection.query(sqlGetTransaction)
+      
+      const isByPrescription = transaction[0].isByPresciption
+      console.log(isByPrescription);
+
+
+      detail.forEach( async(item) => {
+       
+        const sqlUpdateLog = `UPDATE data_logging SET ? WHERE id = ${item.log_id}`
+        const sqlGetStocks = `select * from stocks WHERE product_id = ${item.product_id};`
+        const sqlUpdateStocks = `UPDATE stocks SET ? WHERE product_id = ${item.product_id}`;
             
             try {
-              const [log] = await connection.query(sqlUpdateLog, dataBought)
+
+              if (isByPrescription) {
+                const dataCustom = [{
+                  stock_out: item.quantity,
+                  progress: 0,
+                  status: 'custom',
+                  }]
+          
+                  const [log] = await connection.query(sqlUpdateLog, dataCustom)
+                
+              } else {
+                const dataBought = [{
+                  stock_out: item.quantity,
+                  progress: 0,
+                  status: 'bought',
+                  }]
+                  const [log] = await connection.query(sqlUpdateLog, dataBought)
+                
+              }
+         
               const [stock] = await connection.query(sqlGetStocks);
 
               const {qtyBoxAvailable, qtyBoxTotal, qtyBottleAvailable, qtyBottleTotal, qtyMlAvailable, qtyMlTotal, qtyStripsavailable, qtyStripsTotal, qtyMgAvailable, qtyMgTotal } = stock[0]
@@ -88,7 +191,7 @@ const putTransactionSendRouter =  async (req, res, next) => {
                       ]
 
                      const [stock] = await connection.query(sqlUpdateStocks, stockData)
-                     console.log(stock);
+                     
                       
                     } else {
                       stockData = [ 
@@ -98,7 +201,7 @@ const putTransactionSendRouter =  async (req, res, next) => {
                         }
                       ]  
                       const [stock] = await connection.query(sqlUpdateStocks, stockData)  
-                        console.log(stock);
+                        
                     }
                     
                   } catch (error) {
@@ -124,6 +227,8 @@ const putTransactionSendRouter =  async (req, res, next) => {
   }
 };
 
+
+router.put("/reject/:transactionId", putTransactionRejectRouter)
 router.put("/send/:transactionId", putTransactionSendRouter)
 router.put("/status/:transactionId", putTransactionStatusRouter)
 router.put("/:transactionId", putAddressRouter)
