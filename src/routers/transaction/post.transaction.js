@@ -11,11 +11,13 @@ const postTransactionRouter = async (req, res, next) => {
       await connection.beginTransaction();
       
       try {
+        const username = req.body.username
+        const user_id = req.body.userId
         const sqlPostTransaction = "INSERT INTO transaction SET ?";
         
         const dataTransaction = [
           {
-            invoice:"INV//" + Date.now(),
+            invoice:"INV//" + Date.now() + `//${req.body.userId}`,
             user_id: req.body.userId,
             transactionStatus: 'waiting',
             totalPrice: req.body.subTotal,
@@ -32,19 +34,33 @@ const postTransactionRouter = async (req, res, next) => {
             const sqlPostTransactionDetail = "INSERT INTO transactiondetail SET ?";
             const sqlGetStocks = `select * from stocks WHERE product_id = ${item.product_id};`
             const sqlUpdateProduct = `UPDATE stocks SET ? WHERE product_id = ${item.product_id}`;
-            const transaction_id = result.insertId
+            const sqlPostLog = "INSERT INTO data_logging SET ?"
+
+            const dataInProgress = [{
+                user_id: user_id,
+                username: username,
+                product_id: item.product_id,
+                progress: item.productQuantity,
+                status: 'checkout',
+                }]
+              
+              const transaction_id = result.insertId
 
             try {
               
               const [result] = await connection.query(sqlGetStocks);
+              const [data_log] = await connection.query(sqlPostLog, dataInProgress)
               
+              const log_id = data_log.insertId
               const {qtyBoxAvailable, qtyBoxTotal, qtyBottleAvailable, qtyBottleTotal, qtyMlAvailable, qtyMlTotal, qtyStripsavailable, qtyStripsTotal, qtyMgAvailable, qtyMgTotal } = result[0]
              
               const transactionDetailData = [
                 {
                     transaction_id: transaction_id,
                     product_id: item.product_id,
+                    log_id: data_log.insertId,
                     productCategory: item.category_id,
+                    isLiquid: item.isLiquid,
                     productName: item.productName,
                     productDescription: item.productDetails,
                     productImg: item.productIMG,
@@ -91,9 +107,9 @@ const postTransactionRouter = async (req, res, next) => {
                       const [stock] = await connection.query(sqlUpdateProduct, stockData)  
                                       
                     }
-    
+                    
                     const [detail] = await connection.query(sqlPostTransactionDetail, transactionDetailData);
-                   
+                  
                     
                   } catch (error) {
                     next(error);
