@@ -23,7 +23,7 @@ const postAddress =  async (req, res, next) => {
           ];
         
 
-        // console.log(req.body.formState);
+     
 
         const sqlPostAddress = `INSERT INTO address SET ?`;
 

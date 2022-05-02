@@ -86,7 +86,7 @@ const putTransactionRejectRouter =  async (req, res, next) => {
                     ]
 
                    const [stock] = await connection.query(sqlUpdateStocks, stockData)
-                   console.log(stock);
+                  
                     
                   } else {
                     stockData = [ 
@@ -96,7 +96,7 @@ const putTransactionRejectRouter =  async (req, res, next) => {
                       }
                     ]  
                     const [stock] = await connection.query(sqlUpdateStocks, stockData)  
-                      console.log(stock);
+                     
                   }
                   
                 } catch (error) {
@@ -128,16 +128,17 @@ const putTransactionSendRouter =  async (req, res, next) => {
       const sqlGetTransaction = `select * from transaction where id = ${req.params.transactionId} `
       const sqlPutTransaction = `UPDATE transaction SET transactionStatus = '${req.body.params.status}' where id = ${req.params.transactionId}`;
 
+
       const [detail] = await connection.query(sqlGetTransactionDetail)
       const [result] = await connection.query(sqlPutTransaction);
       const [transaction] = await connection.query(sqlGetTransaction)
       
       const isByPrescription = transaction[0].isByPresciption
-      console.log(isByPrescription);
+     
 
 
       detail.forEach( async(item) => {
-        console.log(item);
+       
        
         const sqlUpdateLog = `UPDATE data_logging SET ? WHERE id = ${item.log_id}`
         const sqlGetStocks = `select * from stocks WHERE product_id = ${item.product_id};`
@@ -145,8 +146,7 @@ const putTransactionSendRouter =  async (req, res, next) => {
         const sqlUpdateStocks = `UPDATE stocks SET ? WHERE product_id = ${item.product_id}`;
 
         const [detail] = await connection.query(sqlUpdateTransactionDetail)
-        console.log(sqlUpdateTransactionDetail);
-        console.log(detail);
+        
             
             try {
 
