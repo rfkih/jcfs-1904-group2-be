@@ -19,8 +19,7 @@ const postPaymentProof =  async (req, res, next) => {
             },
           ];
     
-     
-     
+    
         const [result] = await connection.query(sqlPostCart, dataPayment);
       
       connection.release();
