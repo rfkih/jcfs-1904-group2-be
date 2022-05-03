@@ -47,16 +47,16 @@ const getCustomOrderRouter =  async (req, res, next) => {
     try {
         const connection = await pool.promise().getConnection()
 
-    
-  
-      const sqlGetOrder = `select * from custom_order where user_id = ${req.params.userId};`;
       
   
-      const [result] = await connection.query(sqlGetOrder );
-      
+      const sqlGetOrder = `select * from custom_order where user_id = ${req.params.userId} ${req.query.selectedStatus} ${req.query.sort} ${req.query.pages} ;`;
+      const sqlCountOrder = `SELECT COUNT(*) AS count FROM custom_order where user_id = ${req.params.userId} ${req.query.selectedStatus}`
+  
+      const [result] = await connection.query(sqlGetOrder);
+      const [count] = await connection.query(sqlCountOrder)
       connection.release();
   
-      res.status(200).send(result);
+      res.status(200).send({result, count});
     } catch (error) {
       next(error)
     }
