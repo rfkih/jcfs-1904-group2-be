@@ -60,13 +60,15 @@ const getProductRouter =  async (req, res, next) => {
     try {
         const connection = await pool.promise().getConnection()
   
-      const sqlGetDeletedProducts = `select id, category_id, productName, productDetails, productIMG, isLiquid, isDeleted, price from products where isDeleted = 1 ${req.query.pages}`;
-      const sqlCountDeletedProducts = `SELECT COUNT(*) AS count FROM products where isDeleted = 1;`
+      const sqlGetDeletedProducts = `select id, category_id, productName, productDetails, productIMG, isLiquid, isDeleted, price from products where isDeleted = 1 ${req.query.keyword} ${req.query.sort} ${req.query.pages}`;
+      const sqlCountDeletedProducts = `SELECT COUNT(*) AS count FROM products where isDeleted = 1 ${req.query.keyword} ${req.query.sort}`
      
 
      
       const [result] = await connection.query(sqlGetDeletedProducts);
       const [count] = await connection.query(sqlCountDeletedProducts)
+
+     
       connection.release();
   
       res.status(200).send({result, count});

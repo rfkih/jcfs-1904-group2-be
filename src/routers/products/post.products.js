@@ -11,7 +11,7 @@ const postProductRouter = async (req, res, next) => {
     
     try {
       const sqlPostProduct = "INSERT INTO products SET ?";
-
+      
       const dataProduct = [
         {
           category_id: req.body.newProduct.category_id,
