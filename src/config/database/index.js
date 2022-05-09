@@ -1,16 +1,16 @@
 require("dotenv").config();
-const mysql = require("mysql2");
+const mysql2 = require("mysql2");
 
-const { DB_USER, DB_NAME, DB_PASS, DB_HOST } = process.env;
-
-const mysql2 = mysql.createPool({
-  host: DB_HOST,
-  user: DB_USER,
-  password: DB_PASS,
-  database: DB_NAME,
+const pool = mysql2.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASS,
+  waitForConnections: true,
+  connectionLimit: 60,
 });
 
-mysql2.getConnection((err, conn) => {
+pool.getConnection((err, conn) => {
   if (err) {
     conn.release();
     console.error("error connecting: " + err.stack);
@@ -20,4 +20,4 @@ mysql2.getConnection((err, conn) => {
   conn.release();
 });
 
-module.exports = { mysql2 };
+module.exports = pool;

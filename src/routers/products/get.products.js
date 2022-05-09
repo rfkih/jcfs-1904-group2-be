@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const {mysql2} = require("../../config/database");
+const pool = require("../../config/database");
 
 
 //Get All Product
@@ -8,7 +8,7 @@ const getProductRouter =  async (req, res, next) => {
 
   
     try {
-      const connection = await mysql2.promise().getConnection();
+      const connection = await pool.promise().getConnection();
 
       const sqlGetProducts = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where isDeleted = 0 ${req.query.keyword} ${req.query.sort} ${req.query.pages}`
       const sqlCountProducts = `SELECT COUNT(*) AS count FROM products where isDeleted = 0;`
@@ -38,14 +38,17 @@ const getProductRouter =  async (req, res, next) => {
   const getProductByIdRouter = async (req, res, next) => {
 
     try {
-        const connection = await mysql2.promise().getConnection()
+        const connection = await pool.promise().getConnection()
   
       const sqlGetProductsById = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products WHERE id = ${req.params.productsId}`;
       
       const [result] = await connection.query(sqlGetProductsById);
+      
+      const  sqlGetCategoryById = `select categoryName from category where id = ${result[0].category_id}`
+      const [category] = await connection.query(sqlGetCategoryById)
       connection.release();
   
-      res.status(200).send(result);
+      res.status(200).send({result, category});
     } catch (error) {
       next(error)
     }
@@ -55,15 +58,17 @@ const getProductRouter =  async (req, res, next) => {
 
   const getDeletedProductRouter =  async (req, res, next) => {
     try {
-        const connection = await mysql2.promise().getConnection()
+        const connection = await pool.promise().getConnection()
   
-      const sqlGetDeletedProducts = `select id, category_id, productName, productDetails, productIMG, isLiquid, isDeleted, price from products where isDeleted = 1 ${req.query.pages}`;
-      const sqlCountDeletedProducts = `SELECT COUNT(*) AS count FROM products where isDeleted = 1;`
+      const sqlGetDeletedProducts = `select id, category_id, productName, productDetails, productIMG, isLiquid, isDeleted, price from products where isDeleted = 1 ${req.query.keyword} ${req.query.sort} ${req.query.pages}`;
+      const sqlCountDeletedProducts = `SELECT COUNT(*) AS count FROM products where isDeleted = 1 ${req.query.keyword} ${req.query.sort}`
      
 
      
       const [result] = await connection.query(sqlGetDeletedProducts);
       const [count] = await connection.query(sqlCountDeletedProducts)
+
+     
       connection.release();
   
       res.status(200).send({result, count});
@@ -76,15 +81,33 @@ const getProductRouter =  async (req, res, next) => {
 
   const getSoldProductRouter =  async (req, res, next) => {
     try {
-        const connection = await mysql2.promise().getConnection()
-      console.log();
+        const connection = await pool.promise().getConnection()
+     
+   
   
-  
-      const sqlGetSoldProducts = `select product_id, productCategory, productName, sum(quantity) as total_bought from transactiondetail where statusTransactionDetail = "complete" ${req.query.keyword} group by product_id, productCategory, productName ${req.query.sortedItem}`
-      
+      const sqlGetSoldProducts = `select product_id, productCategory, productName, sum(quantity) as total_bought from transactiondetail where statusTransactionDetail = "complete" ${req.query.keyword} group by product_id, productCategory, productName ${req.query.sortedItem} ${req.query.pages}`
+      const sqlCountSoldProducts = `SELECT COUNT(*) AS count FROM transactiondetail where statusTransactionDetail = "complete" group by product_id , productCategory, productName`
      
       const [result] = await connection.query(sqlGetSoldProducts);
+      const [count] = await connection.query(sqlCountSoldProducts)
       
+
+      connection.release();
+  
+      res.status(200).send({result , count});
+    } catch (error) {
+      next(error)
+    }
+  };
+
+
+  const getProductNameRouter =  async (req, res, next) => {
+    try {
+      const connection = await pool.promise().getConnection()
+  
+      const sqlGetProductName = `select id, productName from products `
+     
+      const [result] = await connection.query(sqlGetProductName);
 
       connection.release();
   
@@ -94,6 +117,8 @@ const getProductRouter =  async (req, res, next) => {
     }
   };
 
+
+  router.get("/name", getProductNameRouter)
   router.get("/sold", getSoldProductRouter)
   router.get("/deleted", getDeletedProductRouter)
   router.get("/:productsId", getProductByIdRouter)
