@@ -9,6 +9,7 @@ const postTransactionRouter = async (req, res, next) => {
       const connection = await pool.promise().getConnection();
   
       await connection.beginTransaction();
+      console.log(req.body.isByPresciption);
       
       try {
         const username = req.body.username
@@ -21,7 +22,7 @@ const postTransactionRouter = async (req, res, next) => {
             user_id: req.body.userId,
             transactionStatus: 'waiting',
             totalPrice: req.body.subTotal,
-            isByPresciption: 1,
+            isByPresciption: req.body.isByPresciption,
           },
         ];
         
