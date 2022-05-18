@@ -28,12 +28,12 @@ const putDeleteRouter =  async (req, res, next) => {
 
 const putUndeleteRouter =  async (req, res, next) => {
 
-    try {
-        const connection = await pool.promise().getConnection()
+    const connection = await pool.promise().getConnection()
 
+    try {
+       
         const sqlUndelete = `UPDATE products SET isDeleted = 0 WHERE id = ${req.body.id}`;
         
-       
         try {
            const result =  await connection.query(sqlUndelete) 
            
@@ -41,11 +41,14 @@ const putUndeleteRouter =  async (req, res, next) => {
                 message: `Produk berhasil di un-delete`,
                 
             });
+            connection.release();
 
         } catch (error) {
+            connection.release();
             next(error)
         } 
     } catch (error) {
+        connection.release();
         next(error);
     }
 };
@@ -53,8 +56,10 @@ const putUndeleteRouter =  async (req, res, next) => {
 
 const putUpdateProductRouter =  async (req, res, next) => {
 
+    const connection = await pool.promise().getConnection()
+
     try {
-        const connection = await pool.promise().getConnection()
+       
 
         const sqlUpdateProduct = `UPDATE products SET ? WHERE id = ?`;
         
@@ -67,11 +72,14 @@ const putUpdateProductRouter =  async (req, res, next) => {
                 message: `Produk berhasil di update`,
                 
             });
+            connection.release();
 
         } catch (error) {
+            connection.release();
             next(error)
         } 
     } catch (error) {
+        connection.release();
         next(error);
     }
 };

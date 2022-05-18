@@ -4,9 +4,11 @@ const upload = require("../../services/upload");
 
 //Post Product
 const postProductRouter = async (req, res, next) => {
-  try {
-    const connection = await pool.promise().getConnection();
 
+  const connection = await pool.promise().getConnection();
+
+  try {
+    
     await connection.beginTransaction();
     
     try {
@@ -85,9 +87,12 @@ const postProductRouter = async (req, res, next) => {
       res.send("Input Product success");
     } catch (error) {
       connection.rollback();
+      connection.release();
       next(error);
+      
     }
   } catch (error) {
+    connection.release();
     next(error);
   }
 };

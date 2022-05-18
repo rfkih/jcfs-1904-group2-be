@@ -15,6 +15,7 @@ const getUserRouter = async (req, res, next) => {
 
     res.status(200).send(result);
   } catch (error) {
+    connection.release();
     next(error);
   }
 };
@@ -33,6 +34,7 @@ const getVerifyRouter = async (req, res, next) => {
 
     res.status(200).send(`<h1> Verification Success </h1>`);
   } catch (error) {
+    connection.release();
     next(error);
   }
 };
@@ -48,6 +50,7 @@ const getUserByIdRouter = async (req, res, next) => {
 
     res.status(200).send(result);
   } catch (error) {
+    connection.release();
     next(error);
   }
 };
@@ -68,6 +71,7 @@ const getUserRouterAdmin =  async (req, res, next) => {
   
       res.status(200).send({result, userCount});
     } catch (error) {
+      connection.release();
       next(error)
     }
   };
@@ -92,6 +96,7 @@ const getUserRouterAdmin =  async (req, res, next) => {
   
       res.status(200).send({result, transaction, count});
     } catch (error) {
+      connection.release();
       next(error)
     }
   };

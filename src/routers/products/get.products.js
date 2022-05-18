@@ -10,7 +10,7 @@ const getProductRouter =  async (req, res, next) => {
     try {
       const connection = await pool.promise().getConnection();
 
-      const sqlGetProducts = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where isDeleted = 0 ${req.query.keyword} ${req.query.sort} ${req.query.pages}`
+      const sqlGetProducts = `select row_number() over() as rownumber, id, category_id, productName, productDetails, productIMG, isLiquid, price from products where isDeleted = 0 ${req.query.keyword} ${req.query.sort} ${req.query.pages}`
       const sqlCountProducts = `SELECT COUNT(*) AS count FROM products where isDeleted = 0;`
       const sqlGetProductsCategory = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where category_id = ? && isDeleted = 0 ${req.query.keyword}${req.query.sort} ${req.query.pages}`
       const sqlCountProductsCategory = `SELECT COUNT(*) AS count FROM products where category_id = ? && isDeleted = 0`
@@ -29,6 +29,7 @@ const getProductRouter =  async (req, res, next) => {
      }
 
     } catch (error) {
+      connection.release();
       next(error)
     }
   };
@@ -50,6 +51,7 @@ const getProductRouter =  async (req, res, next) => {
   
       res.status(200).send({result, category});
     } catch (error) {
+      connection.release();
       next(error)
     }
   };
@@ -57,8 +59,8 @@ const getProductRouter =  async (req, res, next) => {
   // get Deleted Product
 
   const getDeletedProductRouter =  async (req, res, next) => {
+    const connection = await pool.promise().getConnection()
     try {
-        const connection = await pool.promise().getConnection()
   
       const sqlGetDeletedProducts = `select id, category_id, productName, productDetails, productIMG, isLiquid, isDeleted, price from products where isDeleted = 1 ${req.query.keyword} ${req.query.sort} ${req.query.pages}`;
       const sqlCountDeletedProducts = `SELECT COUNT(*) AS count FROM products where isDeleted = 1 ${req.query.keyword} ${req.query.sort}`
@@ -73,6 +75,7 @@ const getProductRouter =  async (req, res, next) => {
   
       res.status(200).send({result, count});
     } catch (error) {
+      connection.release();
       next(error)
     }
   };
@@ -80,10 +83,10 @@ const getProductRouter =  async (req, res, next) => {
   //get Sold Product
 
   const getSoldProductRouter =  async (req, res, next) => {
+    const connection = await pool.promise().getConnection()
+
     try {
-        const connection = await pool.promise().getConnection()
-     
-   
+       
   
       const sqlGetSoldProducts = `select product_id, productCategory, productName, sum(quantity) as total_bought from transactiondetail where statusTransactionDetail = "complete" ${req.query.keyword} group by product_id, productCategory, productName ${req.query.sortedItem} ${req.query.pages}`
       const sqlCountSoldProducts = `SELECT COUNT(*) AS count FROM transactiondetail where statusTransactionDetail = "complete" group by product_id , productCategory, productName`
@@ -96,15 +99,18 @@ const getProductRouter =  async (req, res, next) => {
   
       res.status(200).send({result , count});
     } catch (error) {
+      connection.release();
       next(error)
     }
   };
 
 
   const getProductNameRouter =  async (req, res, next) => {
+
+    const connection = await pool.promise().getConnection()
+
     try {
-      const connection = await pool.promise().getConnection()
-  
+      
       const sqlGetProductName = `select id, productName from products `
      
       const [result] = await connection.query(sqlGetProductName);
@@ -113,6 +119,7 @@ const getProductRouter =  async (req, res, next) => {
   
       res.status(200).send(result);
     } catch (error) {
+      connection.release();
       next(error)
     }
   };

@@ -14,6 +14,7 @@ const getTransactionRouter = async (req, res, next) => {
     connection.release();
     res.status(200).send({ result, count });
   } catch (error) {
+    connection.release();
     next(error);
   }
 };
@@ -75,6 +76,7 @@ const getSumCompletedTransactionRouter = async (req, res, next) => {
         });
     }
   } catch (error) {
+    connection.release();
     next(error);
   }
 };
@@ -105,6 +107,7 @@ const getTransactionByIdRouter = async (req, res, next) => {
   
     
   } catch (error) {
+    connection.release();
     next(error);
   }
 };
@@ -123,6 +126,7 @@ const getTransactionByDateRouter = async (req, res, next) => {
 
     res.status(200).send({ result, month });
   } catch (error) {
+    connection.release();
     next(error);
   }
 };
@@ -142,6 +146,7 @@ const getTransactionByYearRouter = async (req, res, next) => {
 
     res.status(200).send({ result, total });
   } catch (error) {
+    connection.release();
     next(error);
   }
 };
@@ -166,6 +171,7 @@ const getTransactionByUserIdRouter = async (req, res, next) => {
   
     
   } catch (error) {
+    connection.release();
     next(error);
   }
 };
