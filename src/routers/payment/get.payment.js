@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const pool = require("../../config/database");
-const connection = await pool.promise().getConnection();
 
 const getPaymentRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetAddress = `select * from payment `;
 
@@ -18,6 +19,8 @@ const getPaymentRouter = async (req, res, next) => {
 };
 
 const getSelectedPaymentRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetAddress = `select * from payment where bank like '%${req.query.selected}%'`;
 
@@ -33,6 +36,8 @@ const getSelectedPaymentRouter = async (req, res, next) => {
 };
 
 const getPaymentProofRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetPaymentProof = `select * from payment_proof where transaction_id = ${req.query.transactionId} `;
 

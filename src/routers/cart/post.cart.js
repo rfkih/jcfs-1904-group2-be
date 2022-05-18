@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const pool = require("../../config/database");
-const connection = await pool.promise().getConnection();
 
 const postProductToCart = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const totalPrice =
       req.body.params.product.price * req.body.params.productQuantity;

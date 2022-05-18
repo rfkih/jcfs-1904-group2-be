@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const pool = require("../../config/database");
-const connection = await pool.promise().getConnection();
 
 const getStocksRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetStocks = "select * from stocks WHERE product_id = ?";
 
@@ -40,6 +41,8 @@ const getStocksRouter = async (req, res, next) => {
 // GEt stock detail by id
 
 const getStocksDetailRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetStocks = "select * from stocks WHERE product_id = ?";
 

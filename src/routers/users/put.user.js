@@ -7,10 +7,11 @@ const bcrypt = require("bcryptjs");
 const { sign, verify } = require("../../services/token");
 const auth = require("../../middleware/auth");
 const { uploadAvatar } = require("../../services/upload");
-const connection = await pool.promise().getConnection();
 
 // RESET PASSWORD //
 const putResetPassword = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlReset = "UPDATE users SET password = ? WHERE id = ?;";
 
@@ -33,6 +34,8 @@ const putResetPassword = async (req, res, next) => {
 // EDIT PHOTO PROFILE - AVATAR //
 const multerUploadSingle = uploadAvatar.single("photo");
 const putUserPhotoById = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     let finalImageURL =
       req.protocol + "://" + req.get("host") + "/avatar/" + req.file.filename;
@@ -50,6 +53,8 @@ const putUserPhotoById = async (req, res, next) => {
 
 // EDIT PROFILE KESELURUHAN //
 const putEditProfile = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     let { oldPassword, newPassword, fullName, age, gender, address, email } =
       req.body;

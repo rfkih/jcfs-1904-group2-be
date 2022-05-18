@@ -2,9 +2,10 @@ require("dotenv").config();
 const router = require("express").Router();
 const { verify } = require("../../services/token");
 const pool = require("../../config/database");
-const connection = await pool.promise().getConnection();
 
 const getUserRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetAllUser =
       "select id, username, gender, email, password, role from users;";
@@ -20,6 +21,8 @@ const getUserRouter = async (req, res, next) => {
 };
 
 const getVerifyRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const verifiedToken = verify(req.query.token);
 
@@ -42,6 +45,8 @@ const getVerifyRouter = async (req, res, next) => {
 
 //Get User by Id
 const getUserByIdRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetUserById =
       "SELECT id, username, fullName, address, age, gender, email, photo from users WHERE id = ?";
@@ -58,6 +63,8 @@ const getUserByIdRouter = async (req, res, next) => {
 // Get All User
 
 const getUserRouterAdmin = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetAllUser = `select id, username, name, gender, email, password, role from users where role = "user" ${req.query.keywordUser} ${req.query.sortUser} ${req.query.pages};`;
     const sqlCountUser = `SELECT COUNT(*) AS user_count FROM users where role = "user";`;
@@ -74,6 +81,8 @@ const getUserRouterAdmin = async (req, res, next) => {
 };
 
 const getUserbyIdRouterAdmin = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetUserById = `select id, username, name, gender, photo, email, password, role from users where id = ${req.params.UserId};`;
 

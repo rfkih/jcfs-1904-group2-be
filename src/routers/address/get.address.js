@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const pool = require("../../config/database");
-const connection = await pool.promise().getConnection();
 
 const getAddressByIdRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetAddress = `select * from address where user_id = ${req.params.userId} `;
 
@@ -18,6 +19,8 @@ const getAddressByIdRouter = async (req, res, next) => {
 };
 
 const getSelectedAddressRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetAddress = `select * from address where id = ${req.query.value} `;
 

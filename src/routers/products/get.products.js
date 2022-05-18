@@ -1,10 +1,11 @@
 const router = require("express").Router();
 const pool = require("../../config/database");
-const connection = await pool.promise().getConnection();
 
 //Get All Product
 
 const getProductRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetProducts = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products where isDeleted = 0 ${req.query.keyword} ${req.query.sort} ${req.query.pages}`;
     const sqlCountProducts = `SELECT COUNT(*) AS count FROM products where isDeleted = 0;`;
@@ -37,6 +38,8 @@ const getProductRouter = async (req, res, next) => {
 
 //Get Product By id
 const getProductByIdRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetProductsById = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products WHERE id = ${req.params.productsId}`;
 
@@ -56,6 +59,8 @@ const getProductByIdRouter = async (req, res, next) => {
 // get Deleted Product
 
 const getDeletedProductRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetDeletedProducts = `select id, category_id, productName, productDetails, productIMG, isLiquid, isDeleted, price from products where isDeleted = 1 ${req.query.keyword} ${req.query.sort} ${req.query.pages}`;
     const sqlCountDeletedProducts = `SELECT COUNT(*) AS count FROM products where isDeleted = 1 ${req.query.keyword} ${req.query.sort}`;
@@ -75,6 +80,8 @@ const getDeletedProductRouter = async (req, res, next) => {
 //get Sold Product
 
 const getSoldProductRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetSoldProducts = `select product_id, productCategory, productName, sum(quantity) as total_bought from transactiondetail where statusTransactionDetail = "complete" ${req.query.keyword} group by product_id, productCategory, productName ${req.query.sortedItem} ${req.query.pages}`;
     const sqlCountSoldProducts = `SELECT COUNT(*) AS count FROM transactiondetail where statusTransactionDetail = "complete" group by product_id , productCategory, productName`;
@@ -92,6 +99,8 @@ const getSoldProductRouter = async (req, res, next) => {
 };
 
 const getProductNameRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetProductName = `select id, productName from products `;
 

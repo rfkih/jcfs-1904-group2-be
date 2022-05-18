@@ -1,9 +1,10 @@
 const router = require("express").Router();
 const pool = require("../../config/database");
 const upload = require("../../services/upload");
-const connection = await pool.promise().getConnection();
 
 const postPaymentProof = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlPostCart = "INSERT INTO payment_proof SET ?";
 

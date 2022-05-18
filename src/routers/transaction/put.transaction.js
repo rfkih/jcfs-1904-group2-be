@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const pool = require("../../config/database");
-const connection = await pool.promise().getConnection();
 
 const putAddressRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlInputAddress = `UPDATE transaction SET address_id = ${req.body.firstAddress.id} where id = ${req.params.transactionId}`;
 
@@ -16,6 +17,8 @@ const putAddressRouter = async (req, res, next) => {
 };
 
 const putTransactionStatusRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlInputAddress = `UPDATE transaction SET transactionStatus = '${req.body.params.status}' where id = ${req.params.transactionId}`;
 
@@ -29,6 +32,8 @@ const putTransactionStatusRouter = async (req, res, next) => {
 };
 
 const putTransactionRejectRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetTransactionDetail = ` select * from transactiondetail where transaction_id = ${req.params.transactionId} `;
     const sqlRejectRouter = `UPDATE transaction SET transactionStatus = '${req.body.params.status}' where id = ${req.params.transactionId}`;
@@ -109,6 +114,8 @@ const putTransactionRejectRouter = async (req, res, next) => {
 };
 
 const putTransactionSendRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetTransactionDetail = ` select * from transactiondetail where transaction_id = ${req.params.transactionId} `;
     const sqlGetTransaction = `select * from transaction where id = ${req.params.transactionId} `;

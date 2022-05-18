@@ -6,10 +6,11 @@ const bcrypt = require("bcryptjs");
 const { sign } = require("../../services/token");
 const auth = require("../../middleware/auth");
 const { sendEmail, sendEmailForgotPass } = require("../../services/emails");
-const connection = await pool.promise().getConnection();
 
 //CREATE USER = REGISTER
 const postRegisterUserRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlPostUser = "Insert into users set ?";
     const dataAddUser = req.body;
@@ -44,6 +45,8 @@ const postRegisterUserRouter = async (req, res, next) => {
 
 //LOGIN USER
 const postLoginUserRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const { username, password } = req.body;
 
@@ -81,6 +84,8 @@ const postLoginUserRouter = async (req, res, next) => {
 
 // FORGOT PASSWORD //
 const postForgotPassword = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetUserEmail = "SELECT id FROM users where email = ?;";
     const dataEmail = req.body.email;

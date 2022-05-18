@@ -1,9 +1,10 @@
 const router = require("express").Router();
 const pool = require("../../config/database");
-const connection = await pool.promise().getConnection();
 
 //Get all transaction
 const getTransactionRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction ${req.query.date} ${req.query.status} ${req.query.keywordTransaction} ${req.query.isCustom} ${req.query.sortTransactions} ${req.query.pages}`;
     const sqlCountTransaction = `SELECT COUNT(*) AS count FROM transaction ${req.query.date} ${req.query.status} ${req.query.keywordTransaction} ${req.query.isCustom} ${req.query.sortTransactions} `;
@@ -20,6 +21,8 @@ const getTransactionRouter = async (req, res, next) => {
 
 //Get Completed transaction
 const getSumCompletedTransactionRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetTotalPrice = `select sum(totalPrice) AS total_revenue from transaction where transactionStatus = "complete"`;
 
@@ -75,6 +78,8 @@ const getSumCompletedTransactionRouter = async (req, res, next) => {
 };
 
 const getTransactionByIdRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, address_id, isByPresciption, created_at from transaction where id = ${req.params.transactionId}`;
 
@@ -110,6 +115,8 @@ const getTransactionByIdRouter = async (req, res, next) => {
 
 // get transaction by Date
 const getTransactionByDateRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetTransactionByDate = `select sum(totalPrice) AS total_revenue from transaction ${req.query.date} and transactionStatus = 'complete' `;
     const sqlGetTransactionByMonth = `select sum(totalPrice) AS total_revenue, MONTH(created_at) As month, YEAR(created_at) As year from transaction ${req.query.date} and transactionStatus = 'complete' group by month order by created_at desc;`;
@@ -128,6 +135,8 @@ const getTransactionByDateRouter = async (req, res, next) => {
 // Get transaction by year
 
 const getTransactionByYearRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetTransactionTotal = `select sum(totalPrice) AS total_revenue from transaction ${req.query.year} and transactionStatus = 'complete' `;
     const sqlGetTransactionByYear = `select sum(totalPrice) AS total_revenue, YEAR(created_at) As year from transaction ${req.query.year} and transactionStatus = 'complete' group by year; `;
@@ -146,6 +155,8 @@ const getTransactionByYearRouter = async (req, res, next) => {
 //Get Transaction by user id
 
 const getTransactionByUserIdRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, address_id, isByPresciption, created_at from transaction where user_id = ${req.params.userId} ${req.query.keyword} ${req.query.status} ${req.query.sort} ${req.query.pages} `;
     const sqlCountTransaction = `SELECT COUNT(*) AS count FROM transaction where user_id = ${req.params.userId} ${req.query.keyword} ${req.query.status}`;

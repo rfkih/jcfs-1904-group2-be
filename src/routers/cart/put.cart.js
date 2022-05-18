@@ -1,9 +1,10 @@
 const router = require("express").Router();
 const pool = require("../../config/database");
-const connection = await pool.promise().getConnection();
 
 //Update quantity
 const putUpdateQuantityRouterByProduct = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const totalPrice = req.body.params.price * req.body.params.productQuantity;
 
@@ -21,6 +22,8 @@ const putUpdateQuantityRouterByProduct = async (req, res, next) => {
 };
 
 const putDeleteRouterByProduct = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlPutDelete = `UPDATE cart SET isActive = 0 WHERE id = ${req.body.params.id}`;
 
@@ -36,6 +39,8 @@ const putDeleteRouterByProduct = async (req, res, next) => {
 };
 
 const putEmptyCartRouter = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
+
   try {
     const sqlPutDelete = `UPDATE cart SET isActive = 0 WHERE user_id = ${req.body.params.userId}`;
 
