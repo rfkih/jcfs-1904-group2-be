@@ -5,9 +5,10 @@ const pool = require("../../config/database");
 
 
 const postProductToCart =  async (req, res, next) => {
-    try {
 
-        const connection = await pool.promise().getConnection()
+  const connection = await pool.promise().getConnection()
+
+    try {     
        
         const totalPrice = req.body.params.product.price * req.body.params.productQuantity
 
@@ -33,6 +34,7 @@ const postProductToCart =  async (req, res, next) => {
   
       res.status(200).send(result);
     } catch (error) {
+      connection.release();
       next(error)
     }
   };

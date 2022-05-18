@@ -11,8 +11,11 @@ const multer = require("multer");
 
 // FORGOT PASSWORD //
 const putForgotPassword = async (req, res, next) => {
+
+  const connection = await pool.promise().getConnection();
+
   try {
-    const connection = await pool.promise().getConnection();
+   
 
     const sqlGetUserEmail =
       "SELECT id, username, isVerified, email from users where email = ?";
@@ -42,6 +45,7 @@ const putForgotPassword = async (req, res, next) => {
     connection.release();
     res.status(201).send({ message: "Email has been sent!" });
   } catch (error) {
+    connection.release();
     next(error);
   }
 };
@@ -62,14 +66,17 @@ const putUserPhotoById = async (req, res, next) => {
       .status(201)
       .send({ message: "Profile picture uploaded!", Image: finalImageURL });
   } catch (error) {
+    connection.release();
     next(error);
   }
 };
 
 const putChangePassword = async (req, res, next) => {
-  try {
-    const connection = await pool.promise().getConnection();
 
+  const connection = await pool.promise().getConnection();
+
+  try {
+   
     const { oldPassword, newPassword } = req.body;
 
     // Ambil password yang ada di database
@@ -94,14 +101,18 @@ const putChangePassword = async (req, res, next) => {
 
     res.status(201).send(result);
   } catch (error) {
+    connection.release();
     next(error);
   }
 };
 
 // EDIT PROFILE KESELURUHAN //
 const putEditProfile = async (req, res, next) => {
+
+  const connection = await pool.promise().getConnection();
+
   try {
-    const connection = await pool.promise().getConnection();
+    
     let { oldPassword, newPassword, fullName, age, gender, address, email } =
       req.body;
 
@@ -130,7 +141,9 @@ const putEditProfile = async (req, res, next) => {
       newEditProfile
     );
     res.status(201).send(resultProfile);
+    connection.release();
   } catch (error) {
+    connection.release();
     next(error);
   }
 };

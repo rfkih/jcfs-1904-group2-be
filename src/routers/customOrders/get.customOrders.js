@@ -4,10 +4,11 @@ const pool = require("../../config/database");
 
 
 const getCustomOrderRouter =  async (req, res, next) => {
+
+  const connection = await pool.promise().getConnection()
+
     try {
      
-      const connection = await pool.promise().getConnection()
-  
       const sqlGetOrder = `select * from custom_order ${req.query.status} ${req.query.sort} ${req.query.pages}`;
       const sqlCountOrder = `SELECT COUNT(*) AS count FROM custom_order ${req.query.status}`
   
@@ -18,17 +19,18 @@ const getCustomOrderRouter =  async (req, res, next) => {
   
       res.status(200).send({result, count});
     } catch (error) {
+      connection.release();
       next(error)
     }
   };
 
 
   const getCustomOrderByIdRouter =  async (req, res, next) => {
-    try {
-        const connection = await pool.promise().getConnection()
 
+    const connection = await pool.promise().getConnection()
+
+    try {
       
-  
       const sqlGetOrder = `select * from custom_order where id = ${req.params.orderId};`;
       
   
@@ -38,17 +40,19 @@ const getCustomOrderRouter =  async (req, res, next) => {
   
       res.status(200).send(result);
     } catch (error) {
+      connection.release();
       next(error)
     }
   };
 
 
   const getCustomOrderByUserIdRouter =  async (req, res, next) => {
-    try {
-        const connection = await pool.promise().getConnection()
 
-      
-  
+    const connection = await pool.promise().getConnection()
+
+    try {
+        
+
       const sqlGetOrder = `select * from custom_order where user_id = ${req.params.userId} ${req.query.selectedStatus} ${req.query.sort} ${req.query.pages} ;`;
       const sqlCountOrder = `SELECT COUNT(*) AS count FROM custom_order where user_id = ${req.params.userId} ${req.query.selectedStatus}`
   
@@ -58,6 +62,7 @@ const getCustomOrderRouter =  async (req, res, next) => {
   
       res.status(200).send({result, count});
     } catch (error) {
+      connection.release();
       next(error)
     }
   };
@@ -68,7 +73,7 @@ const getCustomOrderRouter =  async (req, res, next) => {
 
 
 router.get("/user/:userId", getCustomOrderByUserIdRouter)
-  router.get("/:orderId", getCustomOrderByIdRouter )
+router.get("/:orderId", getCustomOrderByIdRouter )
 router.get("/", getCustomOrderRouter )
 
 module.exports = router;

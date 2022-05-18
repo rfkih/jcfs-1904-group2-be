@@ -6,11 +6,12 @@ const pool = require("../../config/database");
 
 //Update quantity
 const putUpdateQuantityRouterByProduct =  async (req, res, next) => {
-    try {
 
-        const connection = await pool.promise().getConnection()
+  const connection = await pool.promise().getConnection()
+
+    try {    
        
-    const totalPrice = ( req.body.params.price * req.body.params.productQuantity)
+      const totalPrice = ( req.body.params.price * req.body.params.productQuantity)
 
       const sqlPutQuantity = `UPDATE cart SET productQuantity = ${req.body.params.productQuantity}, totalPrice = ${totalPrice} WHERE id = ${req.body.params.id}`;
       
@@ -21,16 +22,17 @@ const putUpdateQuantityRouterByProduct =  async (req, res, next) => {
         
       res.status(200).send(result);
     } catch (error) {
+      connection.release();
       next(error)
     }
   };
 
 
   const putDeleteRouterByProduct =  async (req, res, next) => {
+
+    const connection = await pool.promise().getConnection()
+
     try {
-
-        const connection = await pool.promise().getConnection()
-
         
       const sqlPutDelete = `UPDATE cart SET isActive = 0 WHERE id = ${req.body.params.id}`;
      
@@ -40,15 +42,17 @@ const putUpdateQuantityRouterByProduct =  async (req, res, next) => {
   
       res.status(200).send(result);
     } catch (error) {
+      connection.release();
       next(error)
     }
   };
 
 
   const putEmptyCartRouter =  async (req, res, next) => {
-    try {
 
-        const connection = await pool.promise().getConnection()
+    const connection = await pool.promise().getConnection()
+
+    try {    
 
         
       const sqlPutDelete = `UPDATE cart SET isActive = 0 WHERE user_id = ${req.body.params.userId}`;
@@ -59,6 +63,7 @@ const putUpdateQuantityRouterByProduct =  async (req, res, next) => {
   
       res.status(200).send(result);
     } catch (error) {
+      connection.release();
       next(error)
     }
   };

@@ -5,13 +5,15 @@ const pool = require("../../config/database");
 
 
 const getStocksRouter =  async (req, res, next) => {
+
+    const connection = await pool.promise().getConnection()
+
     try {
-        const connection = await pool.promise().getConnection()
-  
+        
       const sqlGetStocks = "select * from stocks WHERE product_id = ?";
      
       const [result] = await connection.query(sqlGetStocks, req.params.productsId);
-      connection.release();
+    
 
       const {qtyBoxAvailable, qtyBoxTotal, qtyBottleAvailable, qtyBottleTotal, qtyMlAvailable, qtyMlTotal, qtyStripsavailable, qtyStripsTotal, qtyMgAvailable, qtyMgTotal } = result[0]
 
@@ -21,7 +23,9 @@ const getStocksRouter =  async (req, res, next) => {
       calculatedStock = {stockLiquid, stockNonLiquid}
 
       res.status(200).send({calculatedStock, result});
+      connection.release();
     } catch (error) {
+      connection.release();
       next(error)
     }
   };
@@ -30,8 +34,10 @@ const getStocksRouter =  async (req, res, next) => {
 
 
 const getStocksDetailRouter =  async (req, res, next) => {
+
+  const connection = await pool.promise().getConnection()
+
   try {
-    const connection = await pool.promise().getConnection()
 
     const sqlGetStocks = "select * from stocks WHERE product_id = ?";
 
@@ -46,7 +52,6 @@ const getStocksDetailRouter =  async (req, res, next) => {
     const [data] = await connection.query(sqlGetLog)
     const [result] = await connection.query(sqlGetStocks, req.params.productsId);
 
-    connection.release();
 
     const {qtyBoxAvailable, qtyBoxTotal, qtyBottleAvailable, qtyBottleTotal, qtyMlAvailable, qtyMlTotal, qtyStripsavailable, qtyStripsTotal, qtyMgAvailable, qtyMgTotal } = result[0]
 
@@ -56,7 +61,9 @@ const getStocksDetailRouter =  async (req, res, next) => {
     calculatedStock = {stockLiquid, stockNonLiquid}
 
     res.status(200).send({calculatedStock, result, data, detail});
+    connection.release();
   } catch (error) {
+    connection.release();
     next(error)
   }
 };

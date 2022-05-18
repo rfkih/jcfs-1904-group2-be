@@ -5,8 +5,11 @@ const pool = require("../../config/database");
 
 
 const putAddressRouter =  async (req, res, next) => {  
+
+  const connection = await pool.promise().getConnection();
+
     try {
-        const connection = await pool.promise().getConnection();
+        
        
         const sqlInputAddress = `UPDATE transaction SET address_id = ${req.body.firstAddress.id} where id = ${req.params.transactionId}`;
 
@@ -15,15 +18,19 @@ const putAddressRouter =  async (req, res, next) => {
         res.status(200).send(result);
          
     } catch (error) {
+      connection.release();
       next(error)
     }
 };
 
 
 
-const putTransactionStatusRouter =  async (req, res, next) => {  
+const putTransactionStatusRouter =  async (req, res, next) => { 
+  
+  const connection = await pool.promise().getConnection();
+
   try {
-      const connection = await pool.promise().getConnection();
+    
      
       const sqlInputAddress = `UPDATE transaction SET transactionStatus = '${req.body.params.status}' where id = ${req.params.transactionId}`;
 
@@ -32,14 +39,18 @@ const putTransactionStatusRouter =  async (req, res, next) => {
       res.status(200).send(result);
        
   } catch (error) {
+    connection.release();
     next(error)
   }
 };
 
 
 const putTransactionRejectRouter =  async (req, res, next) => {  
+
+  const connection = await pool.promise().getConnection();
+
   try {
-      const connection = await pool.promise().getConnection();
+    
 
       const sqlGetTransactionDetail = ` select * from transactiondetail where transaction_id = ${req.params.transactionId} `
       const sqlRejectRouter = `UPDATE transaction SET transactionStatus = '${req.body.params.status}' where id = ${req.params.transactionId}`;
@@ -116,14 +127,18 @@ const putTransactionRejectRouter =  async (req, res, next) => {
       res.status(200).send(result);
        
   } catch (error) {
+    connection.release();
     next(error)
   }
 };
 
 
 const putTransactionSendRouter =  async (req, res, next) => {  
+
+  const connection = await pool.promise().getConnection();
+
   try {
-      const connection = await pool.promise().getConnection();
+     
       const sqlGetTransactionDetail = ` select * from transactiondetail where transaction_id = ${req.params.transactionId} `
       const sqlGetTransaction = `select * from transaction where id = ${req.params.transactionId} `
       const sqlPutTransaction = `UPDATE transaction SET transactionStatus = '${req.body.params.status}' where id = ${req.params.transactionId}`;
@@ -229,6 +244,7 @@ const putTransactionSendRouter =  async (req, res, next) => {
       res.status(200).send();
        
   } catch (error) {
+    connection.release();
     next(error)
   }
 };

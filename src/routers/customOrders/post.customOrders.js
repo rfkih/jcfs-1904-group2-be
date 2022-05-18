@@ -6,11 +6,11 @@ const upload = require("../../services/upload");
 
 
 const postCustomOrderRouter = async (req, res, next) => {
-    try {
-      const connection = await pool.promise().getConnection();
-        
-      
 
+  const connection = await pool.promise().getConnection();
+
+    try {
+        
       const sqlPostStocks = "INSERT INTO custom_order SET ?";
   
       const data = req.body.formState;
@@ -21,10 +21,13 @@ const postCustomOrderRouter = async (req, res, next) => {
         res.status(201).send({
           message: `Order Has been submited`,
         });
+        connection.release();
       } catch (error) {
+        connection.release();
         next(error);
       }
     } catch (error) {
+      connection.release();
       next(error);
     }
   };

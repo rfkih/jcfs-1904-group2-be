@@ -6,9 +6,9 @@ const pool = require("../../config/database");
 
 const getProductRouter =  async (req, res, next) => {
 
-  
-    try {
-      const connection = await pool.promise().getConnection();
+  const connection = await pool.promise().getConnection();
+
+    try {  
 
       const sqlGetProducts = `select row_number() over() as rownumber, id, category_id, productName, productDetails, productIMG, isLiquid, price from products where isDeleted = 0 ${req.query.keyword} ${req.query.sort} ${req.query.pages}`
       const sqlCountProducts = `SELECT COUNT(*) AS count FROM products where isDeleted = 0;`
@@ -38,8 +38,11 @@ const getProductRouter =  async (req, res, next) => {
   //Get Product By id
   const getProductByIdRouter = async (req, res, next) => {
 
+
+    const connection = await pool.promise().getConnection()
+    
     try {
-        const connection = await pool.promise().getConnection()
+      
   
       const sqlGetProductsById = `select id, category_id, productName, productDetails, productIMG, isLiquid, price from products WHERE id = ${req.params.productsId}`;
       
@@ -88,7 +91,7 @@ const getProductRouter =  async (req, res, next) => {
     try {
        
   
-      const sqlGetSoldProducts = `select product_id, productCategory, productName, sum(quantity) as total_bought from transactiondetail where statusTransactionDetail = "complete" ${req.query.keyword} group by product_id, productCategory, productName ${req.query.sortedItem} ${req.query.pages}`
+      const sqlGetSoldProducts = `select row_number() over() as rownumber, product_id, productCategory, productName, sum(quantity) as total_bought from transactiondetail where statusTransactionDetail = "complete" ${req.query.keyword} group by product_id, productCategory, productName ${req.query.sortedItem} ${req.query.pages}`
       const sqlCountSoldProducts = `SELECT COUNT(*) AS count FROM transactiondetail where statusTransactionDetail = "complete" group by product_id , productCategory, productName`
      
       const [result] = await connection.query(sqlGetSoldProducts);

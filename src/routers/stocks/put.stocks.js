@@ -75,9 +75,11 @@ const putUpdateStocksRouter = async (req, res, next) => {
 //add update stock
 
 const putAddStocksRouter = async (req, res, next) => {
+
+    const connection = await pool.promise().getConnection()
  
     try {
-        const connection = await pool.promise().getConnection()
+       
       
         try {
                 
@@ -101,13 +103,14 @@ const putAddStocksRouter = async (req, res, next) => {
             res.status(201).send({
                 message: `Add Stock Success`,               
             });
+            connection.release();
      
     } catch (error) {
-        
+        connection.release();
         next(error);
     }
   } catch (error) {
-   
+    connection.release();
     next(error);
   }
 };

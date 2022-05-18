@@ -6,9 +6,11 @@ const upload = require("../../services/upload");
 
 
 const postPaymentProof =  async (req, res, next) => {
-    try {
-        const connection = await pool.promise().getConnection();
 
+  const connection = await pool.promise().getConnection();
+
+    try {
+       
         const sqlPostCart = "INSERT INTO payment_proof SET ?";
 
         const dataPayment = [
@@ -26,6 +28,7 @@ const postPaymentProof =  async (req, res, next) => {
   
       res.status(200).send(result);
     } catch (error) {
+      connection.release();
       next(error)
     }
   };

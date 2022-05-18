@@ -15,9 +15,15 @@ pool.getConnection((err, conn) => {
     conn.release();
     console.error("error connecting: " + err.stack);
     return;
-  }
-  console.log(`Successfully connected to the database (id ${conn.threadId})`);
-  conn.release();
+  } 
+    console.log(`Successfully connected to the database (id ${conn.threadId})`);
+    conn.release();
+    
+  
+
+    
+  
+  
 });
 
 module.exports = pool;

@@ -4,8 +4,10 @@ const pool = require("../../config/database");
 //Get Categories
 
 const getCategoriesRouter = async (req, res, next) => {
-  try {
-    const connection = await pool.promise().getConnection();
+  
+  const connection = await pool.promise().getConnection();
+
+  try {  
 
     const sqlGetCategories = "select id, categoryName from category";
 
@@ -14,6 +16,7 @@ const getCategoriesRouter = async (req, res, next) => {
 
     res.status(200).send(result);
   } catch (error) {
+    connection.release();
     next(error);
   }
 };

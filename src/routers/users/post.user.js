@@ -9,8 +9,11 @@ const { sendEmail } = require("../../services/emails");
 
 //CREATE USER = REGISTER
 const postRegisterUserRouter = async (req, res, next) => {
+
+  const connection = await pool.promise().getConnection();
+  
   try {
-    const connection = await pool.promise().getConnection();
+    
 
     const sqlPostUser = "Insert into users set ?";
     const dataAddUser = req.body;
@@ -38,14 +41,18 @@ const postRegisterUserRouter = async (req, res, next) => {
       message: `Data dengan username: ${req.body.username} berhasil ditambahkan`,
     });
   } catch (error) {
+    connection.release();
     next(error);
   }
 };
 
 //LOGIN USER
 const postLoginUserRouter = async (req, res, next) => {
+
+  const connection = await pool.promise().getConnection();
+
   try {
-    const connection = await pool.promise().getConnection();
+    
     const { username, password } = req.body;
 
     const sqlLoginUser =
@@ -75,6 +82,7 @@ const postLoginUserRouter = async (req, res, next) => {
     connection.release();
     res.status(201).send({ ...result[0], token });
   } catch (error) {
+    connection.release();
     next(error);
   }
 };

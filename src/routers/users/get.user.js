@@ -4,8 +4,11 @@ const { verify } = require("../../services/token");
 const pool = require("../../config/database");
 
 const getUserRouter = async (req, res, next) => {
+
+  const connection = await pool.promise().getConnection();
+  
   try {
-    const connection = await pool.promise().getConnection();
+   
 
     const sqlGetAllUser =
       "select id, username, gender, email, password, role from users;";
@@ -21,8 +24,10 @@ const getUserRouter = async (req, res, next) => {
 };
 
 const getVerifyRouter = async (req, res, next) => {
+
+  const connection = await pool.promise().getConnection();
+
   try {
-    const connection = await pool.promise().getConnection();
 
     const verifiedToken = verify(req.query.token);
 
@@ -41,8 +46,11 @@ const getVerifyRouter = async (req, res, next) => {
 
 //Get User by Id
 const getUserByIdRouter = async (req, res, next) => {
+
+  const connection = await pool.promise().getConnection();
+
   try {
-    const connection = await pool.promise().getConnection();
+   
     const sqlGetUserById =
       "SELECT id, username, name, age, gender, email, photo from users WHERE id = ?";
     const [result] = await connection.query(sqlGetUserById, req.params.id);
@@ -58,11 +66,12 @@ const getUserByIdRouter = async (req, res, next) => {
 
 // Get All User
 const getUserRouterAdmin =  async (req, res, next) => {
+
+  const connection = await pool.promise().getConnection()
+
     try {
-      const connection = await pool.promise().getConnection()
-      
   
-      const sqlGetAllUser = `select id, username, name, gender, email, password, role from users where role = "user" ${req.query.keywordUser} ${req.query.sortUser} ${req.query.pages};`;
+      const sqlGetAllUser = `select row_number() over() as rownumber, id, username, name, gender, email, password, role from users where role = "user" ${req.query.keywordUser} ${req.query.sortUser} ${req.query.pages};`;
       const sqlCountUser = `SELECT COUNT(*) AS user_count FROM users where role = "user";`;
   
       const [result] = await connection.query(sqlGetAllUser);
