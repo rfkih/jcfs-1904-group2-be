@@ -1,74 +1,54 @@
 const router = require("express").Router();
 const pool = require("../../config/database");
+const connection = await pool.promise().getConnection();
 
+const getPaymentRouter = async (req, res, next) => {
+  try {
+    const sqlGetAddress = `select * from payment `;
 
+    const [result] = await connection.query(sqlGetAddress);
 
+    connection.release();
 
-const getPaymentRouter =  async (req, res, next) => {
-    try {
-        const connection = await pool.promise().getConnection()
+    res.status(200).send(result);
+  } catch (error) {
+    connection.release();
+    next(error);
+  }
+};
 
-  
-      const sqlGetAddress = `select * from payment `
-   
-      const [result] = await connection.query(sqlGetAddress);
-    
-      
-      connection.release();
-  
-      res.status(200).send(result );
-    } catch (error) {
-      next(error)
-    }
-  };
+const getSelectedPaymentRouter = async (req, res, next) => {
+  try {
+    const sqlGetAddress = `select * from payment where bank like '%${req.query.selected}%'`;
 
-  const getSelectedPaymentRouter =  async (req, res, next) => {
-    try {
+    const [result] = await connection.query(sqlGetAddress);
 
-        const connection = await pool.promise().getConnection()
+    connection.release();
 
-  
-      const sqlGetAddress = `select * from payment where bank like '%${req.query.selected}%'`
+    res.status(200).send(result);
+  } catch (error) {
+    connection.release();
+    next(error);
+  }
+};
 
-    
-   
-      const [result] = await connection.query(sqlGetAddress);
-    
-      
-      connection.release();
-  
-      res.status(200).send(result );
-    } catch (error) {
-      next(error)
-    }
-  };
+const getPaymentProofRouter = async (req, res, next) => {
+  try {
+    const sqlGetPaymentProof = `select * from payment_proof where transaction_id = ${req.query.transactionId} `;
 
+    const [result] = await connection.query(sqlGetPaymentProof);
 
+    connection.release();
 
-  const getPaymentProofRouter =  async (req, res, next) => {
-    try {
+    res.status(200).send(result);
+  } catch (error) {
+    connection.release();
+    next(error);
+  }
+};
 
-    
+router.get("/paymentproof/:transactionId", getPaymentProofRouter);
+router.get("/selected", getSelectedPaymentRouter);
+router.get("/", getPaymentRouter);
 
-      const connection = await pool.promise().getConnection()
-
-  
-      const sqlGetPaymentProof = `select * from payment_proof where transaction_id = ${req.query.transactionId} `
-   
-      const [result] = await connection.query(sqlGetPaymentProof);
-    
-      
-      connection.release();
-  
-      res.status(200).send(result );
-    } catch (error) {
-      next(error)
-    }
-  };
-
-  router.get("/paymentproof/:transactionId", getPaymentProofRouter)
-  router.get("/selected", getSelectedPaymentRouter)
-  router.get("/", getPaymentRouter)
- 
-  module.exports = router;
-
+module.exports = router;

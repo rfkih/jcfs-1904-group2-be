@@ -1,10 +1,9 @@
 const router = require("express").Router();
 const pool = require("../../config/database");
+const connection = await pool.promise().getConnection();
 
 const getTransactionDetailRouter = async (req, res, next) => {
   try {
-    const connection = await pool.promise().getConnection();
-
     const sqlGetTransactionDetail = "select * from transactiondetail";
 
     const sqlTotalSold = `select sum(quantity) AS total_sold from transactiondetail where statusTransactionDetail = "complete";`;
@@ -17,6 +16,7 @@ const getTransactionDetailRouter = async (req, res, next) => {
 
     res.status(200).send({ result, totalSold });
   } catch (error) {
+    connection.release();
     next(error);
   }
 };
@@ -25,8 +25,6 @@ const getTransactionDetailRouter = async (req, res, next) => {
 
 const getTransactionDetailCategoryRouter = async (req, res, next) => {
   try {
-    const connection = await pool.promise().getConnection();
-
     const sqlCategoryDetail = `select productCategory, sum(quantity) as total_bought from transactiondetail where statusTransactionDetail ="complete" group by productCategory ${req.query.sortedCategory} ${req.query.pages};`;
     const sqlCategoryCount = `SELECT COUNT(*) AS count FROM transactiondetail where statusTransactionDetail = 'complete' group by productCategory;`;
     const [categoryDetail] = await connection.query(sqlCategoryDetail);
@@ -35,6 +33,7 @@ const getTransactionDetailCategoryRouter = async (req, res, next) => {
 
     res.status(200).send({ categoryDetail, count });
   } catch (error) {
+    connection.release();
     next(error);
   }
 };
@@ -43,8 +42,6 @@ const getTransactionDetailCategoryRouter = async (req, res, next) => {
 
 const getTransactionDetailByIdRouter = async (req, res, next) => {
   try {
-    const connection = await pool.promise().getConnection();
-
     const sqlGetTransactionDetail = `select * from transactiondetail where transaction_id = ${req.params.transactionId} group by id;`;
 
     const [result] = await connection.query(sqlGetTransactionDetail);
@@ -53,6 +50,7 @@ const getTransactionDetailByIdRouter = async (req, res, next) => {
 
     res.status(200).send(result);
   } catch (error) {
+    connection.release();
     next(error);
   }
 };
@@ -61,8 +59,6 @@ const getTransactionDetailByIdRouter = async (req, res, next) => {
 
 const getTransactionDetailByIdProduct = async (req, res, next) => {
   try {
-    const connection = await pool.promise().getConnection();
-
     const sqlGetTransactionDetail = `select * from transactiondetail where product_id = ${req.params.productId} ${req.query.date} ${req.query.sort} ${req.query.pages} `;
 
     const sqlgetQuantity = `select sum(quantity) as total_bought, sum(totalPrice) as total_amount from transactiondetail where product_id = ${req.params.productId} and statusTransactionDetail = 'complete' ${req.query.date}`;
@@ -81,6 +77,7 @@ const getTransactionDetailByIdProduct = async (req, res, next) => {
     connection.release();
     res.status(200).send({ result, category, total, product, count });
   } catch (error) {
+    connection.release();
     next(error);
   }
 };

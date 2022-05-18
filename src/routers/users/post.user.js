@@ -6,12 +6,11 @@ const bcrypt = require("bcryptjs");
 const { sign } = require("../../services/token");
 const auth = require("../../middleware/auth");
 const { sendEmail, sendEmailForgotPass } = require("../../services/emails");
+const connection = await pool.promise().getConnection();
 
 //CREATE USER = REGISTER
 const postRegisterUserRouter = async (req, res, next) => {
   try {
-    const connection = await pool.promise().getConnection();
-
     const sqlPostUser = "Insert into users set ?";
     const dataAddUser = req.body;
     const isEmail = validator.isEmail(dataAddUser.email);
@@ -38,6 +37,7 @@ const postRegisterUserRouter = async (req, res, next) => {
       message: `Data dengan username: ${req.body.username} berhasil ditambahkan`,
     });
   } catch (error) {
+    connection.release();
     next(error);
   }
 };
@@ -45,7 +45,6 @@ const postRegisterUserRouter = async (req, res, next) => {
 //LOGIN USER
 const postLoginUserRouter = async (req, res, next) => {
   try {
-    const connection = await pool.promise().getConnection();
     const { username, password } = req.body;
 
     const sqlLoginUser =
@@ -75,6 +74,7 @@ const postLoginUserRouter = async (req, res, next) => {
     connection.release();
     res.status(201).send({ ...result[0], token });
   } catch (error) {
+    connection.release();
     next(error);
   }
 };
@@ -82,8 +82,6 @@ const postLoginUserRouter = async (req, res, next) => {
 // FORGOT PASSWORD //
 const postForgotPassword = async (req, res, next) => {
   try {
-    const connection = await pool.promise().getConnection();
-
     const sqlGetUserEmail = "SELECT id FROM users where email = ?;";
     const dataEmail = req.body.email;
     console.log(req.body);
@@ -109,6 +107,7 @@ const postForgotPassword = async (req, res, next) => {
     connection.release();
     res.status(201).send({ token });
   } catch (error) {
+    connection.release();
     next(error);
   }
 };
@@ -116,6 +115,5 @@ const postForgotPassword = async (req, res, next) => {
 router.post("/", postRegisterUserRouter);
 router.post("/login", postLoginUserRouter);
 router.post("/forgot-password", postForgotPassword);
-
 
 module.exports = router;

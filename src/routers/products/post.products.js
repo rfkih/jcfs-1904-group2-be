@@ -1,17 +1,16 @@
 const router = require("express").Router();
 const pool = require("../../config/database");
 const upload = require("../../services/upload");
+const connection = await pool.promise().getConnection();
 
 //Post Product
 const postProductRouter = async (req, res, next) => {
   try {
-    const connection = await pool.promise().getConnection();
-
     await connection.beginTransaction();
-    
+
     try {
       const sqlPostProduct = "INSERT INTO products SET ?";
-      
+
       const dataProduct = [
         {
           category_id: req.body.newProduct.category_id,
@@ -72,7 +71,6 @@ const postProductRouter = async (req, res, next) => {
         },
       ];
 
-      
       if (req.body.newProduct.isLiquid) {
         await connection.query(sqlPostLog, dataLogLiquid);
       } else {

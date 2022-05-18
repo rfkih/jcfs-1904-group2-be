@@ -7,12 +7,11 @@ const bcrypt = require("bcryptjs");
 const { sign, verify } = require("../../services/token");
 const auth = require("../../middleware/auth");
 const { uploadAvatar } = require("../../services/upload");
+const connection = await pool.promise().getConnection();
 
 // RESET PASSWORD //
 const putResetPassword = async (req, res, next) => {
   try {
-    const connection = await pool.promise().getConnection();
-
     const sqlReset = "UPDATE users SET password = ? WHERE id = ?;";
 
     const verifiedToken = verify(req.params.token);
@@ -26,6 +25,7 @@ const putResetPassword = async (req, res, next) => {
 
     res.status(200).send("Password has been reset");
   } catch (error) {
+    connection.release();
     next(error);
   }
 };
@@ -34,8 +34,6 @@ const putResetPassword = async (req, res, next) => {
 const multerUploadSingle = uploadAvatar.single("photo");
 const putUserPhotoById = async (req, res, next) => {
   try {
-    const connection = await pool.promise().getConnection();
-
     let finalImageURL =
       req.protocol + "://" + req.get("host") + "/avatar/" + req.file.filename;
 
@@ -53,10 +51,8 @@ const putUserPhotoById = async (req, res, next) => {
 // EDIT PROFILE KESELURUHAN //
 const putEditProfile = async (req, res, next) => {
   try {
-    const connection = await pool.promise().getConnection();
     let { oldPassword, newPassword, fullName, age, gender, address, email } =
       req.body;
-
 
     console.log("change ", req.body);
 
@@ -102,7 +98,6 @@ const putEditProfile = async (req, res, next) => {
     next(error);
   }
 };
-
 
 router.put("/edit-profile/:id", auth, putEditProfile);
 router.put(

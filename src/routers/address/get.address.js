@@ -1,49 +1,38 @@
 const router = require("express").Router();
 const pool = require("../../config/database");
+const connection = await pool.promise().getConnection();
 
+const getAddressByIdRouter = async (req, res, next) => {
+  try {
+    const sqlGetAddress = `select * from address where user_id = ${req.params.userId} `;
 
+    const [result] = await connection.query(sqlGetAddress);
 
+    connection.release();
 
-const getAddressByIdRouter =  async (req, res, next) => {
-    try {
+    res.status(200).send(result);
+  } catch (error) {
+    connection.release();
+    next(error);
+  }
+};
 
-        const connection = await pool.promise().getConnection()
+const getSelectedAddressRouter = async (req, res, next) => {
+  try {
+    const sqlGetAddress = `select * from address where id = ${req.query.value} `;
 
-  
-      const sqlGetAddress = `select * from address where user_id = ${req.params.userId} `
-   
-      const [result] = await connection.query(sqlGetAddress);
-    
-      
-      connection.release();
-  
-      res.status(200).send(result );
-    } catch (error) {
-      next(error)
-    }
-  };
+    const [result] = await connection.query(sqlGetAddress);
 
+    connection.release();
 
-  const getSelectedAddressRouter =  async (req, res, next) => {
-    try {
+    res.status(200).send(result);
+  } catch (error) {
+    connection.release();
+    next(error);
+  }
+};
 
-        const connection = await pool.promise().getConnection()
+router.get("/selected", getSelectedAddressRouter);
+router.get("/:userId", getAddressByIdRouter);
 
-        
-      const sqlGetAddress = `select * from address where id = ${req.query.value} `
-   
-      const [result] = await connection.query(sqlGetAddress);
-    
-      
-      connection.release();
-  
-      res.status(200).send(result );
-    } catch (error) {
-      next(error)
-    }
-  };
-
-  router.get("/selected", getSelectedAddressRouter)
-  router.get("/:userId", getAddressByIdRouter)
- 
-  module.exports = router;
+module.exports = router;
