@@ -5,11 +5,13 @@ const pool = require("../../config/database");
 
 const postTransactionRouter = async (req, res, next) => {
 
+  const connection = await pool.promise().getConnection();
+
     try {
-      const connection = await pool.promise().getConnection();
+      
   
       await connection.beginTransaction();
-
+      console.log(req.body.isByPresciption);
       
       try {
         const username = req.body.username
@@ -23,7 +25,6 @@ const postTransactionRouter = async (req, res, next) => {
             transactionStatus: 'waiting',
             totalPrice: req.body.subTotal,
             isByPresciption: req.body.isByPresciption,
-
           },
         ];
         
@@ -114,13 +115,15 @@ const postTransactionRouter = async (req, res, next) => {
                   
                     
                   } catch (error) {
+              
                     next(error);
                   }
                   
                 }
              
             } catch (error) {
-              
+              next(error);
+          
             }
             
         });
@@ -136,11 +139,14 @@ const postTransactionRouter = async (req, res, next) => {
   
         connection.commit();
         res.send("input transaction success");
+        connection.release();
       } catch (error) {
         connection.rollback();
+        connection.release();
         next(error);
       }
     } catch (error) {
+      connection.release();
       next(error);
     }
   };

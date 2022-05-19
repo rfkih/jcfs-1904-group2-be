@@ -5,13 +5,16 @@ const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const { sign } = require("../../services/token");
 const auth = require("../../middleware/auth");
-const { sendEmail, sendEmailForgotPass } = require("../../services/emails");
+const { sendEmail } = require("../../services/emails");
 
 //CREATE USER = REGISTER
 const postRegisterUserRouter = async (req, res, next) => {
-  const connection = await pool.promise().getConnection();
 
+  const connection = await pool.promise().getConnection();
+  
   try {
+    
+
     const sqlPostUser = "Insert into users set ?";
     const dataAddUser = req.body;
     const isEmail = validator.isEmail(dataAddUser.email);
@@ -45,9 +48,11 @@ const postRegisterUserRouter = async (req, res, next) => {
 
 //LOGIN USER
 const postLoginUserRouter = async (req, res, next) => {
+
   const connection = await pool.promise().getConnection();
 
   try {
+    
     const { username, password } = req.body;
 
     const sqlLoginUser =
@@ -81,44 +86,7 @@ const postLoginUserRouter = async (req, res, next) => {
     next(error);
   }
 };
-
-// FORGOT PASSWORD //
-const postForgotPassword = async (req, res, next) => {
-  const connection = await pool.promise().getConnection();
-
-  try {
-    const sqlGetUserEmail = "SELECT id FROM users where email = ?;";
-    const dataEmail = req.body.email;
-    console.log(req.body);
-
-    const [result] = await connection.query(sqlGetUserEmail, dataEmail);
-
-    const user = result[0];
-    console.log(user);
-    if (!user)
-      return res
-        .status(404)
-        .send({ message: "User not found! Registrasi terlebih dahulu" });
-
-    // const token = sign({ id: result.selectEmail });
-    const token = sign({ id: user.id });
-    console.log(user.id);
-
-    sendEmailForgotPass({
-      recipient: dataEmail,
-      subject: "Forgot Password",
-      url: `${process.env.CLIENT_URL}/reset-password/${token}`,
-    });
-    connection.release();
-    res.status(201).send({ token });
-  } catch (error) {
-    connection.release();
-    next(error);
-  }
-};
-
 router.post("/", postRegisterUserRouter);
 router.post("/login", postLoginUserRouter);
-router.post("/forgot-password", postForgotPassword);
 
 module.exports = router;
