@@ -26,5 +26,3 @@ const getDataLogRouter = async (req, res, next) => {
   router.get("/", getDataLogRouter);
 
 module.exports = router;
-
-  
