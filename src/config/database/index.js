@@ -12,12 +12,15 @@ const pool = mysql2.createPool({
 
 pool.getConnection((err, conn) => {
   if (err) {
+    console.log('disini', conn);
+    console.log('disini', err);
     conn.release();
     console.error("error connecting: " + err.stack);
     return;
   } 
     console.log(`Successfully connected to the database (id ${conn.threadId})`);
     conn.release();
+  
     
   
 
