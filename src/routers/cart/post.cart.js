@@ -1,47 +1,37 @@
 const router = require("express").Router();
 const pool = require("../../config/database");
 
+const postProductToCart = async (req, res, next) => {
+  const connection = await pool.promise().getConnection();
 
+  try {
+    const totalPrice =
+      req.body.params.product.price * req.body.params.productQuantity;
 
+    const sqlPostCart = "INSERT INTO cart SET ?";
 
-const postProductToCart =  async (req, res, next) => {
+    const dataProduct = [
+      {
+        user_id: req.body.params.userId,
+        product_id: req.body.params.product.id,
+        price: req.body.params.product.price,
+        productQuantity: req.body.params.productQuantity,
+        totalPrice: totalPrice,
+        isActive: 1,
+        isCustom: req.body.params.isCustom,
+      },
+    ];
 
-  const connection = await pool.promise().getConnection()
+    const [result] = await connection.query(sqlPostCart, dataProduct);
+    connection.release();
 
-    try {     
-       
-        const totalPrice = req.body.params.product.price * req.body.params.productQuantity
+    res.status(200).send(result);
+  } catch (error) {
+    connection.release();
+    next(error);
+  }
+};
 
-        const sqlPostCart = "INSERT INTO cart SET ?";
-
-        const dataProduct = [
-            {
-              user_id: req.body.params.userId,
-              product_id: req.body.params.product.id,
-              price: req.body.params.product.price,
-              productQuantity: req.body.params.productQuantity,
-              totalPrice: totalPrice,
-              isActive: 1,
-              isCustom: req.body.params.isCustom,
-            },
-          ];
-    
-     
-     
-        const [result] = await connection.query(sqlPostCart, dataProduct);
-      
-      connection.release();
-  
-      res.status(200).send(result);
-    } catch (error) {
-      connection.release();
-      next(error)
-    }
-  };
-
-
-
-  router.post("/", postProductToCart);
-
+router.post("/", postProductToCart);
 
 module.exports = router;

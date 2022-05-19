@@ -75,4 +75,3 @@ const getPaymentRouter =  async (req, res, next) => {
   router.get("/", getPaymentRouter)
  
   module.exports = router;
-
