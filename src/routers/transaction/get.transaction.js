@@ -104,7 +104,7 @@ const getTransactionByIdRouter = async (req, res, next) => {
     const [courier] = await connection.query(sqlGetCourier, result[0].id)
     const [user] = await connection.query(sqlGetUser, result[0].user_id);
 
-    console.log(courier);
+   
    
     if (result[0].address_id) {
       const [address] = await connection.query(sqlGetAddress, result[0].address_id)
