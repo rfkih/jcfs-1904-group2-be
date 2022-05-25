@@ -24,6 +24,6 @@ const getCartRouter = async (req, res, next) => {
   };
 
  
-
+  router.get("/", getCartRouter)
   module.exports = router;
 
