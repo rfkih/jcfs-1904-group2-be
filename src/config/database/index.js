@@ -14,6 +14,7 @@ pool.getConnection((err, conn) => {
 
   
   if (err) {
+    conn.release();
     console.error("error connecting: " + err.stack);
     return;
   } else {
