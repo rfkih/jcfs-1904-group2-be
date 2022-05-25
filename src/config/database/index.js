@@ -12,9 +12,9 @@ const pool = mysql2.createPool({
 
 pool.getConnection((err, conn) => {
 
-  console.log('wow',conn)
+  // console.log('wow',conn)
   if (err) {
-    conn.release();
+    
     console.error("error connecting: " + err.stack);
     return;
   } else {

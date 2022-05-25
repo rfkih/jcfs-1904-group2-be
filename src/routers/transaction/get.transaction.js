@@ -5,7 +5,7 @@ const pool = require("../../config/database");
 const getTransactionRouter = async (req, res, next) => {
 
   const connection = await pool.promise().getConnection();
-
+    console.log(req)
   try { 
     
     const sqlGetTransaction = `select id, invoice, user_id, transactionStatus, totalPrice, created_at from transaction ${req.query.date} ${req.query.status} ${req.query.keywordTransaction} ${req.query.isCustom} ${req.query.sortTransactions} ${req.query.pages}`;
